@@ -1,0 +1,33 @@
+{
+  "name": "fionella-horse-care-game",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "test": "vitest",
+    "test:ui": "vitest --ui",
+    "test:coverage": "vitest --coverage",
+    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "format": "prettier --write \"src/**/*.{ts,tsx,json}\""
+  },
+  "dependencies": {
+    "phaser": "^3.80.0",
+    "zustand": "^4.5.0"
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^6.0.0",
+    "@typescript-eslint/parser": "^6.0.0",
+    "@vitest/coverage-v8": "^1.0.0",
+    "@vitest/ui": "^1.0.0",
+    "eslint": "^8.45.0",
+    "jsdom": "^28.0.0",
+    "prettier": "^3.0.0",
+    "typescript": "^5.0.2",
+    "vite": "^5.0.0",
+    "vite-plugin-pwa": "^0.17.0",
+    "vitest": "^1.0.0"
+  }
+}

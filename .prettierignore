@@ -1,0 +1,23 @@
+# Build outputs
+dist/
+dist-ssr/
+build/
+
+# Dependencies
+node_modules/
+
+# Coverage
+coverage/
+
+# PWA
+sw.js
+workbox-*.js
+dev-sw.js
+
+# Lock files (auto-generated, don't format)
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Config
+*.config.*.timestamp-*

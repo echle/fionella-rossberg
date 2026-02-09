@@ -1,0 +1,102 @@
+import Phaser from 'phaser';
+import { ToolType } from '../state/types';
+import { useGameStore } from '../state/gameStore';
+
+export class InventoryItem extends Phaser.GameObjects.Container {
+  private background: Phaser.GameObjects.Graphics;
+  private icon: Phaser.GameObjects.Text;
+  private countText: Phaser.GameObjects.Text;
+  private itemType: ToolType;
+  private isAvailable: boolean = true;
+
+  constructor(
+    scene: Phaser.Scene,
+    x: number,
+    y: number,
+    itemType: ToolType,
+    iconText: string,
+    initialCount: number
+  ) {
+    super(scene, x, y);
+
+    this.itemType = itemType;
+
+    // Background slot
+    this.background = scene.add.graphics();
+    this.drawBackground(false);
+
+    // Icon (emoji)
+    this.icon = scene.add.text(0, -10, iconText, {
+      fontSize: '48px',
+      align: 'center',
+    });
+    this.icon.setOrigin(0.5);
+
+    // Count text
+    this.countText = scene.add.text(0, 30, `x${initialCount}`, {
+      fontSize: '16px',
+      color: '#ffffff',
+      fontStyle: 'bold',
+    });
+    this.countText.setOrigin(0.5);
+    this.countText.setStroke('#000000', 3);
+
+    this.add([this.background, this.icon, this.countText]);
+    scene.add.existing(this);
+
+    // Make interactive
+    this.setSize(80, 80);
+    this.setInteractive({ useHandCursor: true });
+  }
+
+  private drawBackground(selected: boolean): void {
+    this.background.clear();
+
+    const size = 80;
+    const half = size / 2;
+
+    // Fill
+    this.background.fillStyle(0x444444, 0.8);
+    this.background.fillRoundedRect(-half, -half, size, size, 8);
+
+    // Border
+    if (selected) {
+      this.background.lineStyle(4, 0xffeb3b, 1); // Yellow when selected
+    } else {
+      this.background.lineStyle(2, 0x888888, 1);
+    }
+    this.background.strokeRoundedRect(-half, -half, size, size, 8);
+
+    // Unavailable overlay
+    if (!this.isAvailable) {
+      this.background.fillStyle(0x000000, 0.6);
+      this.background.fillRoundedRect(-half, -half, size, size, 8);
+    }
+  }
+
+  setSelected(selected: boolean): void {
+    this.drawBackground(selected);
+  }
+
+  setCount(count: number): void {
+    this.countText.setText(`x${count}`);
+    this.isAvailable = count > 0;
+
+    // Re-draw to show/hide unavailable overlay
+    const state = useGameStore.getState();
+    const isSelected = state.ui.selectedTool === this.itemType;
+    this.drawBackground(isSelected);
+
+    // Gray out icon when unavailable
+    this.icon.setAlpha(this.isAvailable ? 1.0 : 0.3);
+    this.countText.setAlpha(this.isAvailable ? 1.0 : 0.5);
+  }
+
+  getItemType(): ToolType {
+    return this.itemType;
+  }
+
+  getIsAvailable(): boolean {
+    return this.isAvailable;
+  }
+}
