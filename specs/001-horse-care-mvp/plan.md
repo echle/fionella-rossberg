@@ -205,6 +205,59 @@ project-root/
 
 **Alternatives Considered**: Jest (requires additional Babel/TS config), Mocha (less modern).
 
+### Decision 7: Asset Creation Strategy
+**Choice**: Phased placeholder approach (MVP → Professional)
+
+**Phase A - MVP Development (Placeholders)**:  
+- **Purpose**: Unblock development immediately, validate gameplay mechanics
+- **Approach**: Programmatically generated placeholder assets
+  - Horse sprite: Colored rectangle/circle with label "Horse" (brown #8B4513)
+  - Status bars: Simple filled rectangles with CSS-style borders
+  - Inventory icons: Unicode emoji or simple geometric shapes (🥕 for carrot, brush rectangle)
+  - Particles: Colored circles (❤️ emoji for hearts, ✨ for sparkles)
+- **Tools**: Canvas API, Phaser Graphics, or free tools like Piskel, GIMP
+- **Quality Standard**: Functional clarity > visual polish. Must be recognizable at 64x64px minimum.
+- **Owner**: Developer creates placeholders inline during implementation
+- **Timeline**: 0 additional days (created during task execution)
+
+**Phase B - Production Polish (Optional)**:  
+- **Purpose**: Professional visual quality for public release
+- **Approach**: Commission or purchase professional sprite assets
+  - Option 1: Hire pixel artist (Fiverr, Upwork, ArtStation) - €200-500 budget
+  - Option 2: Purchase asset packs (itch.io, Unity Asset Store, OpenGameArt) - €50-150
+  - Option 3: AI generation (Midjourney, Stable Diffusion) + manual cleanup - €20/month
+- **Specifications**:
+  - Horse sprite sheet: 512x512px minimum, 4-8 frames per animation (idle, eating, happy)
+  - Status bar assets: 256x64px, 9-slice scalable
+  - Inventory icons: 128x128px, transparent PNG, consistent art style
+  - Particle effects: 64x64px sprite sheets, 4-16 frames
+  - Format: PNG with transparency, max 2048x2048px per texture atlas
+- **Quality Standard**: 
+  - Resolution: Crisp at 2x retina displays (512px+ for main sprites)
+  - Style consistency: All assets match single art direction (e.g., pixel art, hand-drawn, realistic)
+  - Performance: Total asset bundle < 5MB compressed
+- **Owner**: External artist or asset pack provider
+- **Timeline**: +5-7 days if commissioning custom art, +1 day if purchasing packs
+
+**MVP Recommendation**: Start with Phase A placeholders. Visual polish is Principle I but can be achieved incrementally. Placeholder assets satisfy constitutional requirement for "visual feedback" while unblocking core mechanic development.
+
+**Asset Repository Structure**:
+```
+assets/
+├── _placeholder/          # Phase A - generated assets
+│   ├── horse-simple.png
+│   ├── ui-rectangles.png
+│   └── emoji-icons.png
+└── production/            # Phase B - professional assets (when ready)
+    ├── sprites/
+    ├── ui/
+    └── backgrounds/
+```
+
+**Alternatives Considered**: 
+- Full custom art upfront (delays MVP by 1-2 weeks, high cost)
+- No placeholders, code without visuals (violates Principle I, harder to validate gameplay)
+
 ## Phase 1: Design & Contracts
 
 ### Data Model

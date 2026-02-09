@@ -65,10 +65,12 @@
 
 **Independent Test**: Launch game → verify horse sprite visible → verify 3 status bars visible with values
 
-- [ ] T027 [US1] Create placeholder horse sprite assets in assets/sprites/horse/horse-idle.png
-- [ ] T028 [US1] Create status bar UI assets in assets/ui/status-bar-bg.png and status-bar-fill.png
-- [ ] T029 [US1] Load horse sprite in BootScene.ts preload() method using Phaser loader
-- [ ] T030 [P] [US1] Load status bar assets in BootScene.ts preload() method
+**Asset Strategy**: Use placeholder assets for MVP (see plan.md Decision 7). Professional sprites are optional post-MVP polish.
+
+- [ ] T027 [US1] Create placeholder horse sprite: Use Phaser.Graphics to draw brown (#8B4513) circle/rectangle 200x200px labeled "Horse" OR use free horse sprite from OpenGameArt.org, save to assets/_placeholder/horse-idle.png
+- [ ] T028 [US1] Create placeholder status bar UI: Use Phaser.Graphics rectangles (background: gray, fill: green/yellow/red gradient) OR simple PNG bars (256x64px), save to assets/_placeholder/status-bar-*.png
+- [ ] T029 [US1] Load horse sprite in BootScene.ts preload() method using Phaser loader (this.load.image())
+- [ ] T030 [P] [US1] Load status bar assets in BootScene.ts preload() method (this.load.image())
 - [ ] T031 [US1] Create Horse entity class in src/entities/Horse.ts with sprite and position properties
 - [ ] T032 [US1] Instantiate Horse in MainGameScene.ts create() method, position center screen
 - [ ] T033 [US1] Create StatusBar component in src/entities/StatusBar.ts with label, value, max, color
@@ -90,17 +92,17 @@
 
 **Independent Test**: Click carrot → click horse → hunger increases → carrot count decreases
 
-- [ ] T041 [US2] Create carrot icon asset in assets/ui/carrot-icon.png
-- [ ] T042 [US2] Create inventory slot asset in assets/ui/inventory-slot.png
-- [ ] T043 [US2] Load inventory assets in BootScene.ts preload() method
+- [ ] T041 [US2] Create carrot icon placeholder: Use Unicode emoji 🥕 as texture OR draw orange triangle/rectangle in Phaser.Graphics (64x64px), save to assets/_placeholder/carrot-icon.png
+- [ ] T042 [US2] Create inventory slot placeholder: Draw rounded rectangle border (128x128px, gray stroke) in Phaser.Graphics OR simple PNG, save to assets/_placeholder/inventory-slot.png
+- [ ] T043 [US2] Load inventory assets in BootScene.ts preload() method (this.load.image()) (this.load.image())
 - [ ] T044 [US2] Create InventoryItem component in src/entities/InventoryItem.ts with icon, count, selection state
 - [ ] T045 [US2] Render carrot inventory slot in UIScene.ts create() method, bottom-left position
 - [ ] T046 [US2] Bind carrot count to gameStore.inventory.carrots in UIScene.ts update() loop
 - [ ] T047 [US2] Implement selectTool action in src/state/actions.ts: set ui.selectedTool
 - [ ] T048 [US2] Add click handler to carrot slot in UIScene.ts: call selectTool('carrot')
 - [ ] T049 [US2] Highlight selected tool in UIScene.ts: yellow border when selectedTool === 'carrot'
-- [ ] T050 [US2] Create horse eating animation frames in assets/sprites/horse/horse-eating.png
-- [ ] T051 [US2] Define eating animation in BootScene.ts anims.create(): 12 FPS, no repeat
+- [ ] T050 [US2] Create horse eating animation placeholder: Duplicate horse sprite with different tint OR simple scale tween animation (no separate sprite sheet needed for MVP), save to assets/_placeholder/horse-eating.png if using frames
+- [ ] T051 [US2] Define eating animation in BootScene.ts anims.create(): 12 FPS, no repeat (if using sprite sheet) OR use Phaser.Tween for scale/tint animation
 - [ ] T052 [US2] Implement feed action in src/state/actions.ts: hunger += 20, carrots -= 1, clamp values
 - [ ] T053 [US2] Add click handler to Horse in MainGameScene.ts: if selectedTool === 'carrot' call feed()
 - [ ] T054 [US2] Trigger eating animation in MainGameScene.ts after feed() via event emission
@@ -121,15 +123,15 @@
 
 **Independent Test**: Click brush → drag on horse → cleanliness increases → brush uses decrease
 
-- [ ] T061 [US3] Create brush icon asset in assets/ui/brush-icon.png
-- [ ] T062 [US3] Load brush asset in BootScene.ts preload() method
+- [ ] T061 [US3] Create brush icon placeholder: Draw rounded rectangle (brown #8B4513, 64x64px) OR use Unicode ⛏️/🪥 emoji, save to assets/_placeholder/brush-icon.png
+- [ ] T062 [US3] Load brush asset in BootScene.ts preload() method (this.load.image())
 - [ ] T063 [US3] Render brush inventory slot in UIScene.ts create() method, bottom-center position
 - [ ] T064 [US3] Bind brush uses count to gameStore.inventory.brushUses in UIScene.ts update() loop
 - [ ] T065 [US3] Add click handler to brush slot in UIScene.ts: call selectTool('brush')
 - [ ] T066 [US3] Highlight brush when selected in UIScene.ts: yellow border when selectedTool === 'brush'
-- [ ] T067 [US3] Create sparkle particle asset in assets/sprites/effects/sparkles.png
-- [ ] T068 [P] [US3] Create dust particle asset in assets/sprites/effects/dust-particles.png
-- [ ] T069 [US3] Load particle assets in BootScene.ts preload() method
+- [ ] T067 [US3] Create sparkle particle placeholder: Use Unicode ✨ emoji OR Phaser.Graphics white stars (16x16px), save to assets/_placeholder/sparkles.png
+- [ ] T068 [P] [US3] Create dust particle placeholder: Use Phaser.Graphics gray/brown circles (8x8px), save to assets/_placeholder/dust-particles.png
+- [ ] T069 [US3] Load particle assets in BootScene.ts preload() method (this.load.image())
 - [ ] T070 [US3] Create InputSystem in src/systems/InputSystem.ts: track pointer drag events
 - [ ] T071 [US3] Detect drag on horse in InputSystem.ts: emit 'groom' event when selectedTool === 'brush'
 - [ ] T072 [US3] Implement groom action in src/state/actions.ts: cleanliness += 5, brushUses -= 1, clamp values
@@ -152,10 +154,10 @@
 
 **Independent Test**: Deselect tools → click horse → happiness increases → hearts appear
 
-- [ ] T081 [US4] Create heart particle asset in assets/sprites/effects/hearts.png
-- [ ] T082 [US4] Load heart asset in BootScene.ts preload() method
-- [ ] T083 [US4] Create horse happy animation frames in assets/sprites/horse/horse-happy.png
-- [ ] T084 [US4] Define happy animation in BootScene.ts anims.create(): 12 FPS, no repeat
+- [ ] T081 [US4] Create heart particle placeholder: Use Unicode ❤️ emoji as texture OR Phaser.Graphics red heart shapes (32x32px), save to assets/_placeholder/hearts.png
+- [ ] T082 [US4] Load heart asset in BootScene.ts preload() method (this.load.image())
+- [ ] T083 [US4] Create horse happy animation placeholder: Reuse horse idle sprite with scale/bounce tween OR slight position shift animation (no separate frames needed for MVP), save to assets/_placeholder/horse-happy.png if using frames
+- [ ] T084 [US4] Define happy animation in BootScene.ts anims.create(): 12 FPS, no repeat (if using frames) OR use Phaser.Tween for bounce/scale effect
 - [ ] T085 [US4] Implement pet action in src/state/actions.ts: happiness += 10, clamp at 100
 - [ ] T086 [US4] Add petting logic to Horse click handler in MainGameScene.ts: if selectedTool === null call pet()
 - [ ] T087 [US4] Trigger happy animation in MainGameScene.ts after pet() via event emission
@@ -216,8 +218,10 @@
 
 **Purpose**: Visual polish, optimization, responsive design, final testing
 
-- [ ] T116 [P] Add background image in assets/backgrounds/stable-bg.png
-- [ ] T117 [P] Load background in BootScene.ts and render in MainGameScene.ts behind horse
+**Asset Upgrade (Optional)**: If budget allows, replace placeholders with professional sprites from plan.md Decision 7 Phase B before production release.
+
+- [ ] T116 [P] Add background placeholder: Use CSS gradient (sky blue to grass green) OR simple colored rectangle via Phaser.Graphics, save to assets/_placeholder/stable-bg.png if using image
+- [ ] T117 [P] Load background in BootScene.ts (if using image) or create via Phaser.Graphics in MainGameScene.ts behind horse
 - [ ] T118 [P] Implement smooth tween animations for status bar value changes in StatusBar.ts
 - [ ] T119 [P] Add percentage text overlay on status bars in StatusBar.ts: "75/100"
 - [ ] T120 [P] Color-code status bars in StatusBar.ts: green (80-100), yellow (40-79), red (0-39)
@@ -236,6 +240,7 @@
 - [ ] T133 Test production build locally: `npm run preview`
 - [ ] T134 Validate PWA manifest and service worker generation
 - [ ] T135 Create README.md with setup instructions, gameplay description, and credits
+- [ ] T136 [OPTIONAL] Replace placeholder assets with professional sprites (plan.md Decision 7 Phase B): Commission artist OR purchase asset pack, integrate into assets/production/, update asset paths in BootScene.ts
 
 **Polish Complete**: Production-ready MVP
 
