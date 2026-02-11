@@ -11,6 +11,7 @@ export class MainGameScene extends Phaser.Scene {
   private horse?: Horse;
   private decaySystem?: DecaySystem;
   private particles?: Phaser.GameObjects.Particles.ParticleEmitter;
+  private heartParticles?: Phaser.GameObjects.Particles.ParticleEmitter;
   private horseHitArea?: Phaser.Geom.Circle;
   private autoSaveInterval?: ReturnType<typeof setInterval>;
   private lastInteractionTime: number = 0;
@@ -97,7 +98,8 @@ export class MainGameScene extends Phaser.Scene {
     );
 
     // Create particle emitter for sparkles (reusable)
-    this.particles = this.add.particles(0, 0, '✨', {
+    const sparkleTexture = this.textures.exists('particle-sparkle') ? 'particle-sparkle' : '✨';
+    this.particles = this.add.particles(0, 0, sparkleTexture, {
       speed: { min: 20, max: 100 },
       scale: { start: 1, end: 0 },
       alpha: { start: 1, end: 0 },
@@ -105,6 +107,19 @@ export class MainGameScene extends Phaser.Scene {
       gravityY: -50,
       emitting: false,
     });
+    console.log(`[Particles] Using ${sparkleTexture === 'particle-sparkle' ? 'sprite' : 'emoji'} for sparkles`);
+
+    // Create particle emitter for hearts (reusable)
+    const heartTexture = this.textures.exists('particle-heart') ? 'particle-heart' : '❤️';
+    this.heartParticles = this.add.particles(0, 0, heartTexture, {
+      speed: { min: 10, max: 30 },
+      scale: { start: 1, end: 0.5 },
+      alpha: { start: 1, end: 0 },
+      lifespan: 1000,
+      gravityY: -80,
+      emitting: false,
+    });
+    console.log(`[Particles] Using ${heartTexture === 'particle-heart' ? 'sprite' : 'emoji'} for hearts`);
 
     // Setup auto-save interval (every 10 seconds)
     this.autoSaveInterval = setInterval(() => {
@@ -121,22 +136,8 @@ export class MainGameScene extends Phaser.Scene {
   }
 
   private spawnHearts(x: number, y: number): void {
-    // Create temporary heart particles
-    const heart = this.add.text(x, y, '❤️', {
-      fontSize: '32px',
-    });
-    heart.setOrigin(0.5);
-
-    this.tweens.add({
-      targets: heart,
-      y: y - 80,
-      alpha: 0,
-      duration: 1000,
-      ease: 'Cubic.easeOut',
-      onComplete: () => {
-        heart.destroy();
-      },
-    });
+    // Emit heart particles
+    this.heartParticles?.emitParticleAt(x, y, 2);
   }
 
   update(_time: number, _delta: number): void {

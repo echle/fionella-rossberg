@@ -1,27 +1,41 @@
 import Phaser from 'phaser';
 
 export class Horse extends Phaser.GameObjects.Container {
-  private sprite: Phaser.GameObjects.Graphics;
+  private sprite: Phaser.GameObjects.Graphics | Phaser.GameObjects.Image;
   private readonly startY: number;
+  private readonly useSprite: boolean;
 
   constructor(scene: Phaser.Scene, x: number, y: number) {
     super(scene, x, y);
-    
+
     this.startY = y; // Store initial Y position
 
-    // Create placeholder horse sprite using Graphics
-    this.sprite = scene.add.graphics();
-    this.sprite.fillStyle(0x8b4513, 1); // Brown color
-    this.sprite.fillCircle(0, 0, 100); // Circle with radius 100
+    // Check if sprite texture is available, otherwise use placeholder
+    this.useSprite = scene.textures.exists('horse-idle');
 
-    // Add horse label
-    const label = scene.add.text(0, 0, '🐴', {
-      fontSize: '80px',
-      align: 'center',
-    });
-    label.setOrigin(0.5);
+    if (this.useSprite) {
+      // Use loaded sprite
+      this.sprite = scene.add.image(0, 0, 'horse-idle');
+      this.sprite.setDisplaySize(200, 200); // Scale to match placeholder size
+      this.add(this.sprite);
+      console.log('[Horse] Using sprite asset');
+    } else {
+      // Fallback to placeholder Graphics
+      this.sprite = scene.add.graphics();
+      (this.sprite as Phaser.GameObjects.Graphics).fillStyle(0x8b4513, 1);
+      (this.sprite as Phaser.GameObjects.Graphics).fillCircle(0, 0, 100);
+      this.add(this.sprite);
 
-    this.add([this.sprite, label]);
+      // Add emoji label for placeholder (on top of circle)
+      const label = scene.add.text(0, 0, '🐴', {
+        fontSize: '80px',
+        align: 'center',
+      });
+      label.setOrigin(0.5);
+      this.add(label);
+      console.log('[Horse] Using placeholder graphics');
+    }
+
     scene.add.existing(this);
 
     // Slightly larger hit area for easier clicking
@@ -32,7 +46,18 @@ export class Horse extends Phaser.GameObjects.Container {
   playEatingAnimation(): void {
     // Stop any existing tweens on this container to prevent stacking
     this.scene.tweens.killTweensOf(this);
-    
+
+    // If eating sprite exists, switch to it temporarily
+    if (this.useSprite && this.scene.textures.exists('horse-eating')) {
+      const sprite = this.sprite as Phaser.GameObjects.Image;
+      sprite.setTexture('horse-eating');
+
+      // Switch back after animation
+      this.scene.time.delayedCall(800, () => {
+        sprite.setTexture('horse-idle');
+      });
+    }
+
     // Placeholder animation: scale tween
     this.scene.tweens.add({
       targets: this,
@@ -47,10 +72,21 @@ export class Horse extends Phaser.GameObjects.Container {
   playHappyAnimation(): void {
     // Stop any existing tweens on this container to prevent stacking
     this.scene.tweens.killTweensOf(this);
-    
+
     // Reset to original position first
     this.y = this.startY;
-    
+
+    // If happy sprite exists, switch to it temporarily
+    if (this.useSprite && this.scene.textures.exists('horse-happy')) {
+      const sprite = this.sprite as Phaser.GameObjects.Image;
+      sprite.setTexture('horse-happy');
+
+      // Switch back after animation
+      this.scene.time.delayedCall(600, () => {
+        sprite.setTexture('horse-idle');
+      });
+    }
+
     // Placeholder animation: bounce
     this.scene.tweens.add({
       targets: this,

@@ -208,7 +208,7 @@
 - [X] T112 Write unit test in tests/unit/SaveSystem.test.ts: verify save serialization matches schema
 - [X] T113 Write unit test in tests/unit/SaveSystem.test.ts: verify load deserialization and elapsed time
 - [X] T114 Write unit test in tests/unit/SaveSystem.test.ts: verify corrupted data fallback to new game
-- [ ] T115 Write integration test in tests/integration/careCycle.test.ts: feed → save → reload → state restored
+- [X] T115 Write integration test in tests/integration/careCycle.test.ts: feed → save → reload → state restored
 - [X] T135 Create README.md with setup instructions, gameplay description, and credits
 
 **Persistence Complete**: Save/load system functional with elapsed time handling
@@ -319,18 +319,18 @@ Setup (Phase 1) → Foundational (Phase 2)
 
 Before marking feature complete:
 
-- [ ] All 135 tasks marked as completed
-- [ ] All 5 user stories independently testable
-- [ ] Test coverage >= 70% for game logic
-- [ ] Zero TypeScript errors (`tsc --noEmit`)
-- [ ] Zero ESLint warnings (`npm run lint`)
-- [ ] Production build succeeds (`npm run build`)
-- [ ] Game runs at 60 FPS on mid-range device
-- [ ] Cross-browser tested (Chrome, Firefox, Safari, Edge)
-- [ ] Mobile responsive (320px - 2560px width)
-- [ ] PWA installable (manifest + service worker)
-- [ ] Save/load works across browser sessions
-- [ ] All constitutional principles satisfied (Visual Excellence, Engine Foundation, Browser-First, Testable Logic, 2D→3D Path)
+- [X] All 135 tasks marked as completed (T136 optional sprites skipped)
+- [X] All 5 user stories independently testable
+- [X] Test coverage >= 70% for game logic
+- [X] Zero TypeScript errors (`tsc --noEmit`)
+- [X] Zero ESLint warnings (`npm run lint`)
+- [X] Production build succeeds (`npm run build`)
+- [ ] Game runs at 60 FPS on mid-range device (requires manual profiling)
+- [ ] Cross-browser tested (Chrome, Firefox, Safari, Edge) (requires manual testing)
+- [X] Mobile responsive (320px - 2560px width)
+- [X] PWA installable (manifest + service worker)
+- [X] Save/load works across browser sessions
+- [X] All constitutional principles satisfied (Visual Excellence, Engine Foundation, Browser-First, Testable Logic, 2D→3D Path)
 
 ---
 

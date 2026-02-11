@@ -8,8 +8,26 @@ export class BootScene extends Phaser.Scene {
   }
 
   preload(): void {
-    // Asset loading will be added here
-    // For now, scene loads immediately
+    // Optional asset loading - fallback to placeholders if not found
+    // Assets are loaded but errors are ignored (placeholder fallback)
+    this.load.on('loaderror', (file: Phaser.Loader.File) => {
+      console.warn(`[BootScene] Asset not found: ${file.key} - using placeholder`);
+    });
+
+    // Horse sprites (PNG from Kenney.nl or similar)
+    this.load.image('horse-idle', 'assets/sprites/horse-idle.png');
+    this.load.image('horse-eating', 'assets/sprites/horse-eating.png');
+    this.load.image('horse-happy', 'assets/sprites/horse-happy.png');
+
+    // Inventory icons (PNG from Kenney.nl or similar)
+    this.load.image('icon-carrot', 'assets/icons/icon-carrot.png');
+    this.load.image('icon-brush', 'assets/icons/icon-brush.png');
+
+    // Particles (PNG or keep using text emojis as fallback)
+    this.load.image('particle-sparkle', 'assets/particles/particle-sparkle.png');
+    this.load.image('particle-heart', 'assets/particles/particle-heart.png');
+
+    console.log('[BootScene] Preloading assets (fallback to placeholders if missing)');
   }
 
   create(): void {

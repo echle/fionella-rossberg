@@ -4,10 +4,11 @@ import { useGameStore } from '../state/gameStore';
 
 export class InventoryItem extends Phaser.GameObjects.Container {
   private background: Phaser.GameObjects.Graphics;
-  private icon: Phaser.GameObjects.Text;
+  private icon: Phaser.GameObjects.Text | Phaser.GameObjects.Image;
   private countText: Phaser.GameObjects.Text;
   private itemType: ToolType;
   private isAvailable: boolean = true;
+  private useSprite: boolean = false;
 
   constructor(
     scene: Phaser.Scene,
@@ -25,11 +26,23 @@ export class InventoryItem extends Phaser.GameObjects.Container {
     this.background = scene.add.graphics();
     this.drawBackground(false);
 
-    // Icon (emoji)
-    this.icon = scene.add.text(0, -10, iconText, {
-      fontSize: '48px',
-      align: 'center',
-    });
+    // Icon - try sprite first, fallback to emoji
+    const spriteKey = itemType === 'carrot' ? 'icon-carrot' : 'icon-brush';
+    this.useSprite = scene.textures.exists(spriteKey);
+
+    if (this.useSprite) {
+      this.icon = scene.add.image(0, -10, spriteKey);
+      (this.icon as Phaser.GameObjects.Image).setDisplaySize(48, 48);
+      console.log(`[InventoryItem] Using sprite for ${itemType}`);
+    } else {
+      this.icon = scene.add.text(0, -10, iconText, {
+        fontSize: '48px',
+        align: 'center',
+      });
+      (this.icon as Phaser.GameObjects.Text).setOrigin(0.5);
+      console.log(`[InventoryItem] Using emoji for ${itemType}`);
+    }
+
     this.icon.setOrigin(0.5);
 
     // Count text
