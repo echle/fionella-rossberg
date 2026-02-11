@@ -1,0 +1,80 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://fionella-rossberg.game/schemas/game-state.json",
+  "title": "SavedGameState",
+  "description": "Schema for persisted game state in LocalStorage",
+  "type": "object",
+  "required": ["version", "timestamp", "horse", "inventory"],
+  "properties": {
+    "version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$",
+      "description": "Semantic version of the save format (e.g., '1.0.0')",
+      "examples": ["1.0.0", "1.1.0", "2.0.0"]
+    },
+    "timestamp": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Unix timestamp in milliseconds of last save",
+      "examples": [1707465600000]
+    },
+    "horse": {
+      "type": "object",
+      "required": ["hunger", "cleanliness", "happiness"],
+      "properties": {
+        "hunger": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100,
+          "description": "Horse hunger level (0 = starving, 100 = full)"
+        },
+        "cleanliness": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100,
+          "description": "Horse cleanliness level (0 = very dirty, 100 = spotless)"
+        },
+        "happiness": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100,
+          "description": "Horse happiness level (0 = sad, 100 = very happy)"
+        }
+      },
+      "additionalProperties": false
+    },
+    "inventory": {
+      "type": "object",
+      "required": ["carrots", "brushUses"],
+      "properties": {
+        "carrots": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of carrots available for feeding"
+        },
+        "brushUses": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Remaining brush strokes available for grooming"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false,
+  "examples": [
+    {
+      "version": "1.0.0",
+      "timestamp": 1707465600000,
+      "horse": {
+        "hunger": 85,
+        "cleanliness": 60,
+        "happiness": 90
+      },
+      "inventory": {
+        "carrots": 7,
+        "brushUses": 83
+      }
+    }
+  ]
+}
