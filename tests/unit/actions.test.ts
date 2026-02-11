@@ -1,10 +1,11 @@
-import { describe, it, expect, beforeEach } from 'vitest';
-import { useGameStore } from '../../src/state/gameStore';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { useGameStore, DEFAULT_FEEDING_STATE } from '../../src/state/gameStore';
 import { feed, selectTool, groom, pet } from '../../src/state/actions';
 import { INITIAL_STATUS, INITIAL_INVENTORY } from '../../src/config/gameConstants';
 
 describe('Actions', () => {
   beforeEach(() => {
+    vi.useFakeTimers();
     // Reset store to initial state before each test
     useGameStore.setState({
       version: '1.0.0',
@@ -18,6 +19,7 @@ describe('Actions', () => {
         carrots: INITIAL_INVENTORY.CARROTS,
         brushUses: INITIAL_INVENTORY.BRUSH_USES,
       },
+      feeding: DEFAULT_FEEDING_STATE,
       ui: {
         selectedTool: null,
         activeAnimation: null,
@@ -51,12 +53,14 @@ describe('Actions', () => {
   });
 
   describe('feed', () => {
-    it('should increase hunger by 20 and consume 1 carrot', () => {
+    it('should increase hunger by 20 and consume 1 carrot', async () => {
       const initialState = useGameStore.getState();
       const initialHunger = initialState.horse.hunger;
       const initialCarrots = initialState.inventory.carrots;
 
-      const success = feed();
+      const feedPromise = feed();
+      await vi.advanceTimersByTimeAsync(2500);
+      const success = await feedPromise;
 
       expect(success).toBe(true);
 
@@ -65,7 +69,7 @@ describe('Actions', () => {
       expect(newState.inventory.carrots).toBe(initialCarrots - 1);
     });
 
-    it('should clamp hunger at 100', () => {
+    it('should clamp hunger at 100', async () => {
       useGameStore.setState({
         ...useGameStore.getState(),
         horse: {
@@ -74,13 +78,15 @@ describe('Actions', () => {
         },
       });
 
-      feed();
+      const feedPromise = feed();
+      await vi.advanceTimersByTimeAsync(2500);
+      await feedPromise;
 
       const state = useGameStore.getState();
       expect(state.horse.hunger).toBe(100);
     });
 
-    it('should fail when no carrots available', () => {
+    it('should fail when no carrots available', async () => {
       useGameStore.setState({
         ...useGameStore.getState(),
         inventory: {
@@ -89,7 +95,7 @@ describe('Actions', () => {
         },
       });
 
-      const success = feed();
+      const success = await feed();
 
       expect(success).toBe(false);
 
@@ -98,11 +104,15 @@ describe('Actions', () => {
       expect(state.inventory.carrots).toBe(0); // Still 0
     });
 
-    it('should set eating animation', () => {
-      feed();
+    it('should set eating animation', async () => {
+      const feedPromise = feed();
+      await vi.advanceTimersByTimeAsync(100); // Check during eating
 
       const state = useGameStore.getState();
-      expect(state.ui.activeAnimation).toBe('eating');
+      expect(state.feeding.isEating).toBe(true);
+      
+      await vi.advanceTimersByTimeAsync(2400);
+      await feedPromise;
     });
   });
 

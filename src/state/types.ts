@@ -21,12 +21,44 @@ export interface UIState {
   lastInteractionTime: number;
 }
 
+export interface FeedingState {
+  /**
+   * Whether horse is currently eating (animation in progress)
+   * @transient - NOT persisted in SaveSystem (resets to false on reload)
+   */
+  isEating: boolean;
+
+  /**
+   * Timestamp (ms) when current eating animation started
+   * @transient - NOT persisted (cleared on reload)
+   * @nullable - null when not eating
+   */
+  eatStartTime: number | null;
+
+  /**
+   * Timestamps (ms) of recent feedings for satiety tracking
+   * Entries older than 10 seconds (SATIETY_DECAY_MS) are "expired"
+   * but may remain in array until lazy pruning occurs
+   * @persisted - Saved to LocalStorage, pruned before save
+   */
+  recentFeedings: number[];
+
+  /**
+   * Timestamp (ms) until which horse is considered "full"
+   * Calculated as: lastFullTrigger + SATIETY_COOLDOWN_MS (30s)
+   * @persisted - Survives page reload
+   * @nullable - null when horse is not full
+   */
+  fullUntil: number | null;
+}
+
 export interface GameState {
   version: string;
   timestamp: number;
   horse: HorseStatus;
   inventory: Inventory;
   ui: UIState;
+  feeding: FeedingState;
 }
 
 export interface SavedGameState {
@@ -34,4 +66,5 @@ export interface SavedGameState {
   timestamp: number;
   horse: HorseStatus;
   inventory: Inventory;
+  feeding: FeedingState;
 }
