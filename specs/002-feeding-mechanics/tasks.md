@@ -68,11 +68,11 @@
 
 ### Implementation for User Story 2
 
-- [ ] T013 [P] [US2] Integrate satiety tracking in feed() action in src/state/actions.ts (add timestamp to recentFeedings array, calculate satiety count, set fullUntil when limit reached, prune expired feedings before check)
-- [ ] T014 [P] [US2] Update SaveSystem.ts to persist recentFeedings and fullUntil in src/systems/SaveSystem.ts (add feeding field to savedState, prune array before saving, restore feeding state on load)
-- [ ] T015 [US2] Add fullUntil check in feed() action in src/state/actions.ts (check canFeed() helper before deducting carrot, return false if in cooldown)
-- [ ] T016 [P] [US2] Write integration test for satiety cooldown in tests/integration/careCycle.test.ts (test 3-carrot limit triggers cooldown, test 4th feeding blocked, test cooldown persistence across reload)
-- [ ] T017 [P] [US2] Write integration test for satiety decay in tests/integration/careCycle.test.ts (test feeding 2 carrots + 15s wait + 1 carrot does NOT trigger cooldown)
+- [X] T013 [P] [US2] Integrate satiety tracking in feed() action in src/state/actions.ts (add timestamp to recentFeedings array, calculate satiety count, set fullUntil when limit reached, prune expired feedings before check)
+- [X] T014 [P] [US2] Update SaveSystem.ts to persist recentFeedings and fullUntil in src/systems/SaveSystem.ts (add feeding field to savedState, prune array before saving, restore feeding state on load)
+- [X] T015 [US2] Add fullUntil check in feed() action in src/state/actions.ts (check canFeed() helper before deducting carrot, return false if in cooldown)
+- [X] T016 [P] [US2] Write integration test for satiety cooldown in tests/integration/careCycle.test.ts (test 3-carrot limit triggers cooldown, test 4th feeding blocked, test cooldown persistence across reload)
+- [X] T017 [P] [US2] Write integration test for satiety decay in tests/integration/careCycle.test.ts (test feeding 2 carrots + 15s wait + 1 carrot does NOT trigger cooldown)
 
 **Checkpoint**: At this point, User Stories 1 AND 2 should both work independently. 3-carrot limit enforced, cooldown persists across reload, decay prevents spam-blocking.
 
@@ -86,13 +86,13 @@
 
 ### Implementation for User Story 3
 
-- [ ] T018 [P] [US3] Create eating progress bar in UIScene.ts in src/scenes/UIScene.ts (add background rectangle + green foreground rectangle, hide initially, position near horse)
-- [ ] T019 [P] [US3] Create fullness badge in UIScene.ts in src/scenes/UIScene.ts (add circle + "Full" text or 🍽️ emoji, hide initially, position near horse)
-- [ ] T020 [P] [US3] Create countdown timer text in UIScene.ts in src/scenes/UIScene.ts (add text object for "Ready in Xs" message, hide initially, position near fullness badge)
-- [ ] T021 [US3] Add eating progress update logic in UIScene.update() in src/scenes/UIScene.ts (calculate progress from eatStartTime, scale progress bar width 0→1, show/hide based on isEating state)
-- [ ] T022 [US3] Add fullness badge visibility logic in UIScene.update() in src/scenes/UIScene.ts (show badge when fullUntil > now, hide when cooldown expired)
-- [ ] T023 [US3] Add countdown timer update logic in UIScene.create() in src/scenes/UIScene.ts (create 1 Hz timer event, calculate remaining seconds, update text every second, hide when countdown reaches 0)
-- [ ] T024 [US3] Gray out carrot icon when unavailable in UIScene.ts in src/scenes/UIScene.ts (check canFeed() helper, set tint to gray or reduce alpha when eating or full)
+- [X] T018 [P] [US3] Create eating progress bar in UIScene.ts in src/scenes/UIScene.ts (add background rectangle + green foreground rectangle, hide initially, position near horse)
+- [X] T019 [P] [US3] Create fullness badge in UIScene.ts in src/scenes/UIScene.ts (add circle + "Full" text or 🍽️ emoji, hide initially, position near horse)
+- [X] T020 [P] [US3] Create countdown timer text in UIScene.ts in src/scenes/UIScene.ts (add text object for "Ready in Xs" message, hide initially, position near fullness badge)
+- [X] T021 [US3] Add eating progress update logic in UIScene.update() in src/scenes/UIScene.ts (calculate progress from eatStartTime, scale progress bar width 0→1, show/hide based on isEating state)
+- [X] T022 [US3] Add fullness badge visibility logic in UIScene.update() in src/scenes/UIScene.ts (show badge when fullUntil > now, hide when cooldown expired)
+- [X] T023 [US3] Add countdown timer update logic in UIScene.create() in src/scenes/UIScene.ts (create 1 Hz timer event, calculate remaining seconds, update text every second, hide when countdown reaches 0)
+- [X] T024 [US3] Gray out carrot icon when unavailable in UIScene.ts in src/scenes/UIScene.ts (check canFeed() helper, set tint to gray or reduce alpha when eating or full)
 
 **Checkpoint**: All user stories (1, 2, 3) should now be independently functional. Visual feedback is complete and matches eating/cooldown states.
 
@@ -102,12 +102,12 @@
 
 **Purpose**: Validation, documentation, and performance verification
 
-- [ ] T025 [P] Validate quickstart.md examples in specs/002-feeding-mechanics/quickstart.md (run code snippets, verify patterns work as documented)
-- [ ] T026 [P] Run full test suite and verify all tests pass (npm test with 90%+ coverage for feedingHelpers)
-- [ ] T027 Performance check: measure eating animation timing in browser DevTools (verify 2500ms ±50ms, maintain 60 FPS during animation)
-- [ ] T028 Manual test: feed 3 carrots, reload page, verify satiety state persists (recentFeedings array restored, cooldown continues)
-- [ ] T029 Manual test: verify interaction blocking works for all actions (during eating: feed/pet/groom all blocked; during cooldown: pet/groom allowed, feed blocked)
-- [ ] T030 Code review: verify all timestamp logic uses Date.now() not frame counters (grep for frame-based timing, ensure FPS-independent)
+- [X] T025 [P] Validate quickstart.md examples in specs/002-feeding-mechanics/quickstart.md (run code snippets, verify patterns work as documented)
+- [X] T026 [P] Run full test suite and verify all tests pass (npm test with 90%+ coverage for feedingHelpers)
+- [X] T027 Performance check: measure eating animation timing in browser DevTools (verify 2500ms ±50ms, maintain 60 FPS during animation)
+- [X] T028 Manual test: feed 3 carrots, reload page, verify satiety state persists (recentFeedings array restored, cooldown continues)
+- [X] T029 Manual test: verify interaction blocking works for all actions (during eating: feed/pet/groom all blocked; during cooldown: pet/groom allowed, feed blocked)
+- [X] T030 Code review: verify all timestamp logic uses Date.now() not frame counters (grep for frame-based timing, ensure FPS-independent)
 
 ---
 

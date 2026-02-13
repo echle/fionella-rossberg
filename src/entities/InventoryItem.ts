@@ -112,4 +112,24 @@ export class InventoryItem extends Phaser.GameObjects.Container {
   getIsAvailable(): boolean {
     return this.isAvailable;
   }
+
+  /**
+   * Disable/enable the item visually (for feeding mechanics)
+   * Different from count-based availability - this is for temporary state (eating, cooldown)
+   */
+  setDisabled(disabled: boolean): void {
+    if (disabled) {
+      // Gray out the icon
+      if (this.useSprite) {
+        (this.icon as Phaser.GameObjects.Image).setTint(0x888888);
+      }
+      this.icon.setAlpha(0.5);
+    } else {
+      // Restore normal appearance
+      if (this.useSprite) {
+        (this.icon as Phaser.GameObjects.Image).clearTint();
+      }
+      this.icon.setAlpha(this.isAvailable ? 1.0 : 0.3); // Respect count-based availability
+    }
+  }
 }

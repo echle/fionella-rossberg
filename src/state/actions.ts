@@ -10,7 +10,7 @@ import {
 import { msToSeconds } from '../utils/timeUtils';
 import { ToolType } from './types';
 import { saveSystem } from '../systems/SaveSystem';
-import { canFeed } from '../utils/feedingHelpers';
+import { canFeed, pruneExpiredFeedings, calculateSatietyCount } from '../utils/feedingHelpers';
 
 /**
  * Select or deselect a tool
@@ -76,6 +76,21 @@ export async function feed(): Promise<boolean> {
 
   // Apply hunger increment after animation
   const currentState = getGameState();
+  const afterEatingTime = Date.now();
+
+  // Add feeding timestamp and check satiety
+  const updatedFeedings = [...currentState.feeding.recentFeedings, afterEatingTime];
+  const prunedFeedings = pruneExpiredFeedings(
+    updatedFeedings,
+    FEEDING_CONFIG.SATIETY_DECAY_MS,
+    afterEatingTime
+  );
+  const satietyCount = calculateSatietyCount(prunedFeedings, afterEatingTime);
+
+  // Calculate fullUntil if satiety limit reached
+  const newFullUntil = satietyCount >= FEEDING_CONFIG.SATIETY_LIMIT
+    ? afterEatingTime + FEEDING_CONFIG.SATIETY_COOLDOWN_MS
+    : null;
 
   updateGameState(() => ({
     horse: {
@@ -86,6 +101,8 @@ export async function feed(): Promise<boolean> {
       ...currentState.feeding,
       isEating: false,
       eatStartTime: null,
+      recentFeedings: prunedFeedings,
+      fullUntil: newFullUntil,
     },
     ui: {
       ...currentState.ui,

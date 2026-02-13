@@ -2,6 +2,7 @@ import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { SaveSystem } from '../../src/systems/SaveSystem';
 import { GameState, SavedGameState } from '../../src/state/types';
 import { GAME_CONFIG, INITIAL_STATUS, INITIAL_INVENTORY } from '../../src/config/gameConstants';
+import { DEFAULT_FEEDING_STATE } from '../../src/state/gameStore';
 
 describe('SaveSystem', () => {
   let saveSystem: SaveSystem;
@@ -28,6 +29,7 @@ describe('SaveSystem', () => {
         carrots: INITIAL_INVENTORY.CARROTS,
         brushUses: INITIAL_INVENTORY.BRUSH_USES,
       },
+      feeding: DEFAULT_FEEDING_STATE,
       ui: {
         selectedTool: null,
         activeAnimation: null,

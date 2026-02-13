@@ -447,4 +447,122 @@ describe('Care Cycle Integration', () => {
       expect(afterState.feeding.eatStartTime).toBeNull(); // Cleared
     });
   });
+
+  describe('T013-T017: Satiety Limit and Cooldown', () => {
+    it('should block feeding after 3 carrots and enforce 30s cooldown', async () => {
+      const initialCarrots = getGameState().inventory.carrots;
+      
+      // Feed 3 carrots in succession
+      for (let i = 0; i < 3; i++) {
+        const feedPromise = feed();
+        await vi.advanceTimersByTimeAsync(2500);
+        const result = await feedPromise;
+        expect(result).toBe(true); // All 3 should succeed
+      }
+
+      const afterThreeState = getGameState();
+      expect(afterThreeState.inventory.carrots).toBe(initialCarrots - 3);
+      expect(afterThreeState.feeding.recentFeedings).toHaveLength(3);
+      expect(afterThreeState.feeding.fullUntil).toBeGreaterThan(Date.now()); // Cooldown active
+
+      // Try 4th feeding - should be blocked
+      const fourthFeed = await feed();
+      expect(fourthFeed).toBe(false); // Blocked
+      expect(getGameState().inventory.carrots).toBe(initialCarrots - 3); // No carrot deducted
+
+      // Wait 30 seconds (cooldown period)
+      await vi.advanceTimersByTimeAsync(30000);
+
+      // Now feeding should work again
+      const fifthFeed = feed();
+      await vi.advanceTimersByTimeAsync(2500);
+      const fifthResult = await fifthFeed;
+      expect(fifthResult).toBe(true); // Feeding allowed after cooldown
+      expect(getGameState().inventory.carrots).toBe(initialCarrots - 4);
+    });
+
+    it('should persist satiety state across save/load', async () => {
+      // Feed 3 carrots to trigger cooldown
+      for (let i = 0; i < 3; i++) {
+        const feedPromise = feed();
+        await vi.advanceTimersByTimeAsync(2500);
+        await feedPromise;
+      }
+
+      const beforeSave = getGameState();
+      expect(beforeSave.feeding.fullUntil).toBeGreaterThan(Date.now());
+
+      // Save state
+      saveSystem.save(beforeSave);
+
+      // Simulate reload
+      useGameStore.setState({
+        version: GAME_CONFIG.SAVE_VERSION,
+        timestamp: Date.now(),
+        horse: {
+          hunger: INITIAL_STATUS.HUNGER,
+          cleanliness: INITIAL_STATUS.CLEANLINESS,
+          happiness: INITIAL_STATUS.HAPPINESS,
+        },
+        inventory: {
+          carrots: INITIAL_INVENTORY.CARROTS,
+          brushUses: INITIAL_INVENTORY.BRUSH_USES,
+        },
+        feeding: DEFAULT_FEEDING_STATE,
+        ui: {
+          selectedTool: null,
+          activeAnimation: null,
+          lastInteractionTime: 0,
+        },
+      });
+
+      // Load saved state
+      const loadResult = saveSystem.load();
+      expect(loadResult).not.toBeNull();
+      
+      if (loadResult) {
+        loadGameState(loadResult.savedState);
+      }
+
+      // Verify cooldown persisted
+      const afterLoad = getGameState();
+      expect(afterLoad.feeding.fullUntil).toBe(beforeSave.feeding.fullUntil);
+      expect(afterLoad.feeding.recentFeedings).toHaveLength(3);
+
+      // Verify feeding still blocked
+      const blockedFeed = await feed();
+      expect(blockedFeed).toBe(false);
+    });
+
+    it('should allow feeding with decay (2 carrots + 15s wait + 1 carrot)', async () => {
+      const initialCarrots = getGameState().inventory.carrots;
+      
+      // Feed 2 carrots
+      for (let i = 0; i < 2; i++) {
+        const feedPromise = feed();
+        await vi.advanceTimersByTimeAsync(2500);
+        await feedPromise;
+      }
+
+      expect(getGameState().feeding.recentFeedings).toHaveLength(2);
+
+      // Wait 15 seconds (first carrot expires after 10s)
+      await vi.advanceTimersByTimeAsync(15000);
+
+      // Feed 3rd carrot - should NOT trigger cooldown (only 1 active feeding remains)
+      const thirdFeed = feed();
+      await vi.advanceTimersByTimeAsync(2500);
+      const thirdResult = await thirdFeed;
+      
+      expect(thirdResult).toBe(true);
+      expect(getGameState().feeding.fullUntil).toBeNull(); // No cooldown
+      expect(getGameState().inventory.carrots).toBe(initialCarrots - 3);
+
+      // Verify we can still feed (not in cooldown)
+      const fourthFeed = feed();
+      await vi.advanceTimersByTimeAsync(2500);
+      const fourthResult = await fourthFeed;
+      expect(fourthResult).toBe(true);
+    });
+  });
 });
