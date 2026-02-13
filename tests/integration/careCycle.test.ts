@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { useGameStore, getGameState } from '../../src/state/gameStore';
+import { useGameStore, getGameState, DEFAULT_FEEDING_STATE } from '../../src/state/gameStore';
 import { feed, selectTool, groom, pet, loadGameState } from '../../src/state/actions';
 import { SaveSystem } from '../../src/systems/SaveSystem';
 import { INITIAL_STATUS, INITIAL_INVENTORY, GAME_CONFIG, STATUS_INCREMENTS } from '../../src/config/gameConstants';
@@ -9,6 +9,7 @@ describe('Care Cycle Integration', () => {
   const testStorageKey = 'test-care-cycle-save';
 
   beforeEach(() => {
+    vi.useFakeTimers();
     // Clear localStorage before each test
     localStorage.clear();
 
@@ -28,6 +29,7 @@ describe('Care Cycle Integration', () => {
         carrots: INITIAL_INVENTORY.CARROTS,
         brushUses: INITIAL_INVENTORY.BRUSH_USES,
       },
+      feeding: DEFAULT_FEEDING_STATE,
       ui: {
         selectedTool: null,
         activeAnimation: null,
@@ -37,7 +39,7 @@ describe('Care Cycle Integration', () => {
   });
 
   describe('T115: feed → save → reload → state restored', () => {
-    it('should preserve feeding action after save and reload', () => {
+    it('should preserve feeding action after save and reload', async () => {
       // Initial state
       const initialCarrots = INITIAL_INVENTORY.CARROTS;
       const initialHunger = INITIAL_STATUS.HUNGER;
@@ -48,7 +50,9 @@ describe('Care Cycle Integration', () => {
       selectTool('carrot');
       expect(useGameStore.getState().ui.selectedTool).toBe('carrot');
       
-      feed();
+      const feedPromise = feed();
+      await vi.advanceTimersByTimeAsync(2500);
+      await feedPromise;
       const afterFeedState = getGameState();
       
       // Verify feed action worked
@@ -75,6 +79,7 @@ describe('Care Cycle Integration', () => {
           carrots: INITIAL_INVENTORY.CARROTS,
           brushUses: INITIAL_INVENTORY.BRUSH_USES,
         },
+        feeding: DEFAULT_FEEDING_STATE,
         ui: {
           selectedTool: null,
           activeAnimation: null,
@@ -100,13 +105,15 @@ describe('Care Cycle Integration', () => {
       expect(restoredState.horse.hunger).toBe(Math.min(100, initialHunger + STATUS_INCREMENTS.FEED));
     });
 
-    it('should preserve multiple actions (feed + groom + pet) after reload', () => {
+    it('should preserve multiple actions (feed + groom + pet) after reload', async () => {
       // Perform multiple actions
       const initialState = getGameState();
       
       // Feed horse
       selectTool('carrot');
-      feed();
+      const feedPromise = feed();
+      await vi.advanceTimersByTimeAsync(2500);
+      await feedPromise;
       
       // Groom horse
       selectTool('brush');
@@ -141,6 +148,7 @@ describe('Care Cycle Integration', () => {
           carrots: INITIAL_INVENTORY.CARROTS,
           brushUses: INITIAL_INVENTORY.BRUSH_USES,
         },
+        feeding: DEFAULT_FEEDING_STATE,
         ui: {
           selectedTool: null,
           activeAnimation: null,
@@ -165,10 +173,12 @@ describe('Care Cycle Integration', () => {
       expect(restoredState.horse.happiness).toBe(afterActionsState.horse.happiness);
     });
 
-    it('should apply decay to elapsed time on reload', () => {
+    it('should apply decay to elapsed time on reload', async () => {
       // Feed horse to increase hunger
       selectTool('carrot');
-      feed();
+      const feedPromise = feed();
+      await vi.advanceTimersByTimeAsync(2500);
+      await feedPromise;
       const afterFeedState = getGameState();
       const hungerAfterFeed = afterFeedState.horse.hunger;
 
@@ -177,7 +187,6 @@ describe('Care Cycle Integration', () => {
 
       // Mock time passing (10 seconds = 10000ms)
       const elapsedMs = 10000;
-      vi.useFakeTimers();
       vi.setSystemTime(Date.now() + elapsedMs);
 
       // Reset store
@@ -193,6 +202,7 @@ describe('Care Cycle Integration', () => {
           carrots: INITIAL_INVENTORY.CARROTS,
           brushUses: INITIAL_INVENTORY.BRUSH_USES,
         },
+        feeding: DEFAULT_FEEDING_STATE,
         ui: {
           selectedTool: null,
           activeAnimation: null,
@@ -252,13 +262,15 @@ describe('Care Cycle Integration', () => {
   });
 
   describe('Cross-action integration', () => {
-    it('should enforce inventory constraints across save/load', () => {
+    it('should enforce inventory constraints across save/load', async () => {
       // Use all carrots
       selectTool('carrot');
       const initialCarrots = getGameState().inventory.carrots;
       
       for (let i = 0; i < initialCarrots; i++) {
-        feed();
+        const feedPromise = feed();
+        await vi.advanceTimersByTimeAsync(2500);
+        await feedPromise;
       }
 
       expect(getGameState().inventory.carrots).toBe(0);
@@ -279,6 +291,7 @@ describe('Care Cycle Integration', () => {
           carrots: INITIAL_INVENTORY.CARROTS,
           brushUses: INITIAL_INVENTORY.BRUSH_USES,
         },
+        feeding: DEFAULT_FEEDING_STATE,
         ui: {
           selectedTool: null,
           activeAnimation: null,
@@ -296,7 +309,7 @@ describe('Care Cycle Integration', () => {
 
       // Verify feed action is blocked (should not crash or allow negative carrots)
       const beforeFeedState = getGameState();
-      feed(); // Should be blocked
+      await feed(); // Should be blocked
       const afterFeedState = getGameState();
 
       expect(afterFeedState.inventory.carrots).toBe(beforeFeedState.inventory.carrots);
@@ -328,6 +341,7 @@ describe('Care Cycle Integration', () => {
           carrots: INITIAL_INVENTORY.CARROTS,
           brushUses: INITIAL_INVENTORY.BRUSH_USES,
         },
+        feeding: DEFAULT_FEEDING_STATE,
         ui: {
           selectedTool: null,
           activeAnimation: null,
@@ -342,6 +356,213 @@ describe('Care Cycle Integration', () => {
 
       // Verify happiness is still capped at 100
       expect(getGameState().horse.happiness).toBe(100);
+    });
+  });
+
+  describe('T012: Eating Duration and State Transitions', () => {
+    beforeEach(() => {
+      vi.useFakeTimers();
+    });
+
+    afterEach(() => {
+      vi.useRealTimers();
+    });
+
+    it('should delay hunger increase until eating animation completes', async () => {
+      const initialState = getGameState();
+      const initialHunger = initialState.horse.hunger;
+      const initialCarrots = initialState.inventory.carrots;
+
+      // Start feeding (returns Promise)
+      const feedPromise = feed();
+
+      // Immediately after calling feed(), carrot should be deducted but hunger unchanged
+      await vi.advanceTimersByTimeAsync(10); // Small delay for Promise microtask
+      const duringEatingState = getGameState();
+      
+      expect(duringEatingState.inventory.carrots).toBe(initialCarrots - 1); // Carrot deducted immediately
+      expect(duringEatingState.feeding.isEating).toBe(true); // Eating state active
+      expect(duringEatingState.horse.hunger).toBe(initialHunger); // Hunger NOT yet increased
+
+      // Advance time to just before animation completes (2.4s)
+      await vi.advanceTimersByTimeAsync(2400);
+      const almostDoneState = getGameState();
+      expect(almostDoneState.horse.hunger).toBe(initialHunger); // Still unchanged
+
+      // Advance to animation complete (2.5s total)
+      await vi.advanceTimersByTimeAsync(100);
+      await feedPromise; // Wait for Promise to resolve
+
+      // After animation completes, hunger should increase
+      const afterEatingState = getGameState();
+      expect(afterEatingState.feeding.isEating).toBe(false); // Eating done
+      expect(afterEatingState.horse.hunger).toBe(Math.min(100, initialHunger + STATUS_INCREMENTS.FEED)); // Hunger increased
+    });
+
+    it('should block feeding while isEating is true', async () => {
+      const initialCarrots = getGameState().inventory.carrots;
+
+      // Start first feeding
+      const firstFeed = feed();
+
+      // Immediately try to feed again (should be blocked)
+      await vi.advanceTimersByTimeAsync(10);
+      const secondFeedResult = await feed();
+
+      expect(secondFeedResult).toBe(false); // Second feed blocked
+      expect(getGameState().inventory.carrots).toBe(initialCarrots - 1); // Only 1 carrot deducted
+
+      // Complete first feeding
+      await vi.advanceTimersByTimeAsync(2490); // Total: 2500ms
+      await firstFeed;
+
+      // Now feeding should work again
+      const thirdFeed = feed();
+      await vi.advanceTimersByTimeAsync(2500);
+      const thirdFeedResult = await thirdFeed;
+      
+      expect(thirdFeedResult).toBe(true);
+      expect(getGameState().inventory.carrots).toBe(initialCarrots - 2); // 2nd carrot deducted
+    });
+
+    it('should transition isEating state correctly', async () => {
+      // Initial: not eating
+      expect(getGameState().feeding.isEating).toBe(false);
+      expect(getGameState().feeding.eatStartTime).toBeNull();
+
+      // During feeding
+      const feedPromise = feed();
+      await vi.advanceTimersByTimeAsync(10);
+      
+      const duringState = getGameState();
+      expect(duringState.feeding.isEating).toBe(true);
+      expect(duringState.feeding.eatStartTime).toBeGreaterThan(0); // Timestamp set
+
+      // After feeding completes
+      await vi.advanceTimersByTimeAsync(2500);
+      await feedPromise;
+      
+      const afterState = getGameState();
+      expect(afterState.feeding.isEating).toBe(false);
+      expect(afterState.feeding.eatStartTime).toBeNull(); // Cleared
+    });
+  });
+
+  describe('T013-T017: Satiety Limit and Cooldown', () => {
+    it('should block feeding after 3 carrots and enforce 30s cooldown', async () => {
+      const initialCarrots = getGameState().inventory.carrots;
+      
+      // Feed 3 carrots in succession
+      for (let i = 0; i < 3; i++) {
+        const feedPromise = feed();
+        await vi.advanceTimersByTimeAsync(2500);
+        const result = await feedPromise;
+        expect(result).toBe(true); // All 3 should succeed
+      }
+
+      const afterThreeState = getGameState();
+      expect(afterThreeState.inventory.carrots).toBe(initialCarrots - 3);
+      expect(afterThreeState.feeding.recentFeedings).toHaveLength(3);
+      expect(afterThreeState.feeding.fullUntil).toBeGreaterThan(Date.now()); // Cooldown active
+
+      // Try 4th feeding - should be blocked
+      const fourthFeed = await feed();
+      expect(fourthFeed).toBe(false); // Blocked
+      expect(getGameState().inventory.carrots).toBe(initialCarrots - 3); // No carrot deducted
+
+      // Wait 30 seconds (cooldown period)
+      await vi.advanceTimersByTimeAsync(30000);
+
+      // Now feeding should work again
+      const fifthFeed = feed();
+      await vi.advanceTimersByTimeAsync(2500);
+      const fifthResult = await fifthFeed;
+      expect(fifthResult).toBe(true); // Feeding allowed after cooldown
+      expect(getGameState().inventory.carrots).toBe(initialCarrots - 4);
+    });
+
+    it('should persist satiety state across save/load', async () => {
+      // Feed 3 carrots to trigger cooldown
+      for (let i = 0; i < 3; i++) {
+        const feedPromise = feed();
+        await vi.advanceTimersByTimeAsync(2500);
+        await feedPromise;
+      }
+
+      const beforeSave = getGameState();
+      expect(beforeSave.feeding.fullUntil).toBeGreaterThan(Date.now());
+
+      // Save state
+      saveSystem.save(beforeSave);
+
+      // Simulate reload
+      useGameStore.setState({
+        version: GAME_CONFIG.SAVE_VERSION,
+        timestamp: Date.now(),
+        horse: {
+          hunger: INITIAL_STATUS.HUNGER,
+          cleanliness: INITIAL_STATUS.CLEANLINESS,
+          happiness: INITIAL_STATUS.HAPPINESS,
+        },
+        inventory: {
+          carrots: INITIAL_INVENTORY.CARROTS,
+          brushUses: INITIAL_INVENTORY.BRUSH_USES,
+        },
+        feeding: DEFAULT_FEEDING_STATE,
+        ui: {
+          selectedTool: null,
+          activeAnimation: null,
+          lastInteractionTime: 0,
+        },
+      });
+
+      // Load saved state
+      const loadResult = saveSystem.load();
+      expect(loadResult).not.toBeNull();
+      
+      if (loadResult) {
+        loadGameState(loadResult.savedState);
+      }
+
+      // Verify cooldown persisted
+      const afterLoad = getGameState();
+      expect(afterLoad.feeding.fullUntil).toBe(beforeSave.feeding.fullUntil);
+      expect(afterLoad.feeding.recentFeedings).toHaveLength(3);
+
+      // Verify feeding still blocked
+      const blockedFeed = await feed();
+      expect(blockedFeed).toBe(false);
+    });
+
+    it('should allow feeding with decay (2 carrots + 15s wait + 1 carrot)', async () => {
+      const initialCarrots = getGameState().inventory.carrots;
+      
+      // Feed 2 carrots
+      for (let i = 0; i < 2; i++) {
+        const feedPromise = feed();
+        await vi.advanceTimersByTimeAsync(2500);
+        await feedPromise;
+      }
+
+      expect(getGameState().feeding.recentFeedings).toHaveLength(2);
+
+      // Wait 15 seconds (first carrot expires after 10s)
+      await vi.advanceTimersByTimeAsync(15000);
+
+      // Feed 3rd carrot - should NOT trigger cooldown (only 1 active feeding remains)
+      const thirdFeed = feed();
+      await vi.advanceTimersByTimeAsync(2500);
+      const thirdResult = await thirdFeed;
+      
+      expect(thirdResult).toBe(true);
+      expect(getGameState().feeding.fullUntil).toBeNull(); // No cooldown
+      expect(getGameState().inventory.carrots).toBe(initialCarrots - 3);
+
+      // Verify we can still feed (not in cooldown)
+      const fourthFeed = feed();
+      await vi.advanceTimersByTimeAsync(2500);
+      const fourthResult = await fourthFeed;
+      expect(fourthResult).toBe(true);
     });
   });
 });

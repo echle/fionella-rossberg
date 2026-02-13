@@ -35,7 +35,15 @@ export class MainGameScene extends Phaser.Scene {
     this.horseHitArea = new Phaser.Geom.Circle(centerX, centerY, 110);
 
     // Make horse clickable with debouncing
-    this.horse.on('pointerdown', () => {
+    this.horse.on('pointerdown', async () => {
+      const state = useGameStore.getState();
+
+      // Block ALL interactions during eating (T009, T010)
+      if (state.feeding.isEating) {
+        console.log('Horse is eating, wait...');
+        return;
+      }
+
       // Debouncing: prevent spam clicks
       const now = Date.now();
       if (now - this.lastInteractionTime < GAME_CONFIG.INTERACTION_COOLDOWN) {
@@ -43,18 +51,17 @@ export class MainGameScene extends Phaser.Scene {
       }
       this.lastInteractionTime = now;
 
-      const state = useGameStore.getState();
-
       if (state.ui.selectedTool === 'carrot') {
-        // Feed the horse
-        const success = feed();
+        // Feed the horse (async with eating animation)
+        const success = await feed();
         if (success) {
+          console.log('Feeding horse...');
+          await this.horse?.playEatingAnimation();
           console.log('Fed horse! Hunger increased by 20');
-          this.horse?.playEatingAnimation();
           // Deselect tool after use
           selectTool(null);
         } else {
-          console.warn('Cannot feed: no carrots available');
+          console.warn('Cannot feed: no carrots available or horse is full');
         }
       } else if (state.ui.selectedTool === null) {
         // Pet the horse (no tool selected)
@@ -76,6 +83,12 @@ export class MainGameScene extends Phaser.Scene {
       'dragStroke',
       (data: { startX: number; startY: number; endX: number; endY: number }) => {
         const state = useGameStore.getState();
+
+        // Block grooming during eating (T011)
+        if (state.feeding.isEating) {
+          console.log('Horse is eating, cannot groom now');
+          return;
+        }
 
         if (state.ui.selectedTool === 'brush') {
           // Check if stroke is over the horse

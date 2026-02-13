@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import { FEEDING_CONFIG } from '../config/gameConstants';
 
 export class Horse extends Phaser.GameObjects.Container {
   private sprite: Phaser.GameObjects.Graphics | Phaser.GameObjects.Image;
@@ -43,29 +44,32 @@ export class Horse extends Phaser.GameObjects.Container {
     this.setInteractive();
   }
 
-  playEatingAnimation(): void {
-    // Stop any existing tweens on this container to prevent stacking
-    this.scene.tweens.killTweensOf(this);
+  playEatingAnimation(): Promise<void> {
+    return new Promise((resolve) => {
+      // Stop any existing tweens on this container to prevent stacking
+      this.scene.tweens.killTweensOf(this);
 
-    // If eating sprite exists, switch to it temporarily
-    if (this.useSprite && this.scene.textures.exists('horse-eating')) {
-      const sprite = this.sprite as Phaser.GameObjects.Image;
-      sprite.setTexture('horse-eating');
+      // If eating sprite exists, switch to it temporarily
+      if (this.useSprite && this.scene.textures.exists('horse-eating')) {
+        const sprite = this.sprite as Phaser.GameObjects.Image;
+        sprite.setTexture('horse-eating');
 
-      // Switch back after animation
-      this.scene.time.delayedCall(800, () => {
-        sprite.setTexture('horse-idle');
+        // Switch back after animation
+        this.scene.time.delayedCall(FEEDING_CONFIG.EATING_DURATION, () => {
+          sprite.setTexture('horse-idle');
+        });
+      }
+
+      // Placeholder animation: scale tween
+      this.scene.tweens.add({
+        targets: this,
+        scaleX: 1.1,
+        scaleY: 1.1,
+        duration: FEEDING_CONFIG.EATING_DURATION,
+        yoyo: true,
+        ease: 'Sine.easeInOut',
+        onComplete: () => resolve(),
       });
-    }
-
-    // Placeholder animation: scale tween
-    this.scene.tweens.add({
-      targets: this,
-      scaleX: 1.1,
-      scaleY: 1.1,
-      duration: 400,
-      yoyo: true,
-      ease: 'Sine.easeInOut',
     });
   }
 

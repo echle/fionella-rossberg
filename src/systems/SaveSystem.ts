@@ -1,5 +1,6 @@
 import { GameState, SavedGameState } from '../state/types';
-import { GAME_CONFIG } from '../config/gameConstants';
+import { GAME_CONFIG, FEEDING_CONFIG } from '../config/gameConstants';
+import { pruneExpiredFeedings } from '../utils/feedingHelpers';
 
 /**
  * SaveSystem handles game state persistence to LocalStorage with elapsed time restoration
@@ -17,11 +18,26 @@ export class SaveSystem {
    */
   save(gameState: GameState): void {
     try {
+      const now = Date.now();
+      
+      // Prune expired feedings before saving (lazy cleanup)
+      const prunedFeedings = pruneExpiredFeedings(
+        gameState.feeding.recentFeedings,
+        FEEDING_CONFIG.SATIETY_DECAY_MS,
+        now
+      );
+
       const savedState: SavedGameState = {
         version: gameState.version,
         timestamp: gameState.timestamp,
         horse: { ...gameState.horse },
         inventory: { ...gameState.inventory },
+        feeding: {
+          isEating: false, // Transient: reset on load
+          eatStartTime: null, // Transient: reset on load
+          recentFeedings: prunedFeedings,
+          fullUntil: gameState.feeding.fullUntil,
+        },
       };
 
       const serialized = JSON.stringify(savedState);
@@ -84,7 +100,13 @@ export class SaveSystem {
       typeof state.inventory === 'object' &&
       state.inventory !== null &&
       typeof state.inventory.carrots === 'number' &&
-      typeof state.inventory.brushUses === 'number'
+      typeof state.inventory.brushUses === 'number' &&
+      typeof state.feeding === 'object' &&
+      state.feeding !== null &&
+      typeof state.feeding.isEating === 'boolean' &&
+      (state.feeding.eatStartTime === null || typeof state.feeding.eatStartTime === 'number') &&
+      Array.isArray(state.feeding.recentFeedings) &&
+      (state.feeding.fullUntil === null || typeof state.feeding.fullUntil === 'number')
     );
   }
 

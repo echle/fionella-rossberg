@@ -36,3 +36,11 @@ export const GAME_CONFIG = {
   AUTO_SAVE_INTERVAL: 10000, // 10 seconds
   INTERACTION_COOLDOWN: 100, // 100ms to prevent spam
 } as const;
+
+// Feeding mechanics configuration
+export const FEEDING_CONFIG = {
+  EATING_DURATION: 2500, // 2.5 seconds eating animation
+  SATIETY_LIMIT: 3, // Maximum carrots before cooldown
+  SATIETY_DECAY_MS: 10000, // Each carrot expires after 10 seconds
+  SATIETY_COOLDOWN_MS: 30000, // 30 seconds cooldown after hitting limit
+} as const;

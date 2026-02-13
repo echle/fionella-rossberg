@@ -5,10 +5,12 @@ import {
   DECAY_RATES,
   INITIAL_STATUS,
   INITIAL_INVENTORY,
+  FEEDING_CONFIG,
 } from '../config/gameConstants';
 import { msToSeconds } from '../utils/timeUtils';
 import { ToolType } from './types';
 import { saveSystem } from '../systems/SaveSystem';
+import { canFeed, pruneExpiredFeedings, calculateSatietyCount } from '../utils/feedingHelpers';
 
 /**
  * Select or deselect a tool
@@ -28,28 +30,83 @@ export function selectTool(tool: ToolType): void {
 }
 
 /**
- * Feed the horse (increase hunger)
+ * Feed the horse (increase hunger) - async with 2.5s eating animation
+ * 
+ * @returns Promise<boolean> resolves to true if feeding succeeded (after animation completes),
+ *                          resolves to false if feeding blocked (no carrots, already eating, or full)
  */
-export function feed(): boolean {
+export async function feed(): Promise<boolean> {
   const state = getGameState();
+  const now = Date.now();
 
+  // Validation checks (fail fast)
   if (state.inventory.carrots <= 0) {
     console.warn('No carrots available');
     return false;
   }
 
+  if (state.feeding.isEating) {
+    console.warn('Horse is already eating');
+    return false;
+  }
+
+  // Satiety checks (using helpers)
+  if (!canFeed(state, now)) {
+    console.warn('Horse is full or in cooldown');
+    return false;
+  }
+
+  // Deduct carrot immediately (prevents double-feeding exploit)
   updateGameState(() => ({
-    horse: {
-      ...state.horse,
-      hunger: clamp(state.horse.hunger + STATUS_INCREMENTS.FEED, 0, 100),
-    },
     inventory: {
       ...state.inventory,
       carrots: state.inventory.carrots - 1,
     },
+    feeding: {
+      ...state.feeding,
+      isEating: true,
+      eatStartTime: now,
+    },
+  }));
+
+  // Wait for eating animation (2.5 seconds)
+  await new Promise<void>((resolve) => {
+    setTimeout(resolve, FEEDING_CONFIG.EATING_DURATION);
+  });
+
+  // Apply hunger increment after animation
+  const currentState = getGameState();
+  const afterEatingTime = Date.now();
+
+  // Add feeding timestamp and check satiety
+  const updatedFeedings = [...currentState.feeding.recentFeedings, afterEatingTime];
+  const prunedFeedings = pruneExpiredFeedings(
+    updatedFeedings,
+    FEEDING_CONFIG.SATIETY_DECAY_MS,
+    afterEatingTime
+  );
+  const satietyCount = calculateSatietyCount(prunedFeedings, afterEatingTime);
+
+  // Calculate fullUntil if satiety limit reached
+  const newFullUntil = satietyCount >= FEEDING_CONFIG.SATIETY_LIMIT
+    ? afterEatingTime + FEEDING_CONFIG.SATIETY_COOLDOWN_MS
+    : null;
+
+  updateGameState(() => ({
+    horse: {
+      ...currentState.horse,
+      hunger: clamp(currentState.horse.hunger + STATUS_INCREMENTS.FEED, 0, 100),
+    },
+    feeding: {
+      ...currentState.feeding,
+      isEating: false,
+      eatStartTime: null,
+      recentFeedings: prunedFeedings,
+      fullUntil: newFullUntil,
+    },
     ui: {
-      ...state.ui,
-      activeAnimation: 'eating',
+      ...currentState.ui,
+      activeAnimation: null,
     },
   }));
 
