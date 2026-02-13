@@ -6,14 +6,15 @@ A browser-based horse care simulation game where you feed, groom, and pet your v
 
 ## ✨ Features
 
-- **🐴 Virtual Horse Companion**: Interact with your horse in a vibrant stable environment
+- **🐴 Virtual Horse Companion**: Interact with your horse in a vibrant stable environment with professional sprite animations
+- **🎬 Sprite-Based Animations**: Frame-based animations for idle, eating, grooming, and happy states (Feature 003)
 - **🥕 Enhanced Feeding System**: 
   - Timed eating animation (2.5s) with visual progress bar
   - Satiety limit (3 carrots) with 30-second cooldown
   - Smart decay (10s per carrot) prevents permanent lockout
   - Fullness badge with countdown timer
-- **🪥 Grooming Mechanic**: Drag across your horse with a brush to boost cleanliness
-- **❤️ Petting Interaction**: Click your horse to increase happiness and see heart animations
+- **🪥 Grooming Mechanic**: Drag across your horse with a brush to boost cleanliness (with animated grooming response)
+- **❤️ Petting Interaction**: Click your horse to increase happiness and see heart animations with happy animation
 - **⏱️ Time-Based Decay**: Status values decrease gradually over time, requiring regular care
 - **💾 Auto-Save System**: Your game state persists across browser sessions with LocalStorage
 - **📱 Responsive Design**: Play on desktop or mobile devices with adaptive scaling (320px-2560px)
@@ -21,7 +22,7 @@ A browser-based horse care simulation game where you feed, groom, and pet your v
 
 ## 🎮 Current Status
 
-**🎉 MVP + Feature 002 Complete** - All core features and enhanced feeding mechanics implemented!
+**🎉 MVP + Features 002-003 Complete** - Core features, enhanced feeding mechanics, and sprite animations implemented!
 
 ### ✅ Feature 001: Horse Care MVP (136/136 tasks)
 - ✅ Phase 1: Setup (15 tasks)
@@ -39,6 +40,15 @@ A browser-based horse care simulation game where you feed, groom, and pet your v
 - ✅ User Story 2: Satiety limit system (5 tasks)
 - ✅ User Story 3: Visual feedback (7 tasks)
 - ✅ Polish & Validation (6 tasks)
+
+### ✅ Feature 003: Visual Asset Integration  (52/67 tasks MVP scope)
+- ✅ Phase 1: Setup (4 tasks)
+- ✅ Phase 2: Foundation - Sprite loading & animation registration (14 tasks)
+- ✅ Phase 3: User Story 1 (P1) - Animated Horse Sprites (35 tasks)
+- 🚧 Phase 7: Polish & Unit Tests (15 tasks) - In progress
+- ⏸️ Deferr
+
+ed: UI sprites (P2), Particle effects (P3), Background (P4)
 
 ## 🚀 Getting Started
 
