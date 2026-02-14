@@ -15,6 +15,7 @@ export class MainGameScene extends Phaser.Scene {
   private horseHitArea?: Phaser.Geom.Circle;
   private autoSaveInterval?: ReturnType<typeof setInterval>;
   private lastInteractionTime: number = 0;
+  private isGrooming: boolean = false; // T043: Track grooming state for animation control
 
   constructor() {
     super({ key: 'MainGameScene' });
@@ -58,6 +59,11 @@ export class MainGameScene extends Phaser.Scene {
           console.log('Feeding horse...');
           await this.horse?.playEatingAnimation();
           console.log('Fed horse! Hunger increased by 20');
+
+          // T048: Play happy animation after eating completes
+          this.horse?.playHappyAnimation();
+          this.spawnHearts(centerX, centerY - 50);
+
           // Deselect tool after use
           selectTool(null);
         } else {
@@ -97,6 +103,12 @@ export class MainGameScene extends Phaser.Scene {
             this.horseHitArea?.contains(data.endX, data.endY);
 
           if (isOverHorse) {
+            // T043: Start grooming animation on first stroke
+            if (!this.isGrooming) {
+              this.horse?.playGroomingAnimation();
+              this.isGrooming = true;
+            }
+
             const success = groom();
             if (success) {
               console.log('Groomed horse! Cleanliness increased by 5');
@@ -109,6 +121,14 @@ export class MainGameScene extends Phaser.Scene {
         }
       }
     );
+
+    // T044: Stop grooming animation when pointer is released
+    this.input.on('pointerup', () => {
+      if (this.isGrooming) {
+        this.horse?.stopGroomingAnimation();
+        this.isGrooming = false;
+      }
+    });
 
     // Create particle emitter for sparkles (reusable)
     const sparkleTexture = this.textures.exists('particle-sparkle') ? 'particle-sparkle' : '✨';

@@ -44,3 +44,23 @@ export const FEEDING_CONFIG = {
   SATIETY_DECAY_MS: 10000, // Each carrot expires after 10 seconds
   SATIETY_COOLDOWN_MS: 30000, // 30 seconds cooldown after hitting limit
 } as const;
+
+// Sprite animation configuration
+export const SPRITE_CONFIG = {
+  FRAME_RATES: {
+    IDLE: 9,
+    WALK: 12,
+    EAT: 9,
+    HAPPY: 12,
+    GROOM: 9,
+  },
+  ANCHOR: {
+    X: 0.5, // Center horizontally
+    Y: 1.0, // Bottom-aligned (feet on ground)
+  },
+  SCALE: 0.5, // 512px frames → 256px display size (high-resolution sprites)
+  FRAME_SIZE: {
+    WIDTH: 512, // Each frame is 512×384px
+    HEIGHT: 384,
+  },
+} as const;

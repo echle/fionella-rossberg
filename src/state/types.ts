@@ -4,6 +4,17 @@
 
 export type ToolType = 'carrot' | 'brush' | null;
 
+/**
+ * Horse animation states for sprite-based animations
+ * @feature 003-visual-assets
+ */
+export type HorseAnimationState =
+  | 'idle'      // Default looping state (breathing, tail swish)
+  | 'eating'    // Triggered by feed action, 2.5s duration
+  | 'grooming'  // Triggered by brush drag, loops while dragging
+  | 'happy'     // One-shot animation after grooming/feeding completion
+  | 'walking';  // Reserved for future movement feature
+
 export interface HorseStatus {
   hunger: number; // 0-100
   cleanliness: number; // 0-100

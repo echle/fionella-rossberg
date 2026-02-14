@@ -1,0 +1,41 @@
+{
+  "frameWidth": 512,
+  "frameHeight": 384,
+  "animations": {
+    "horse-idle": {
+      "sheet": "horse_idle.png",
+      "start": 0,
+      "end": 7,
+      "frameRate": 9,
+      "repeat": -1
+    },
+    "horse-walk": {
+      "sheet": "horse_walk.png",
+      "start": 0,
+      "end": 7,
+      "frameRate": 12,
+      "repeat": -1
+    },
+    "horse-eat": {
+      "sheet": "horse_eat.png",
+      "start": 0,
+      "end": 7,
+      "frameRate": 9,
+      "repeat": -1
+    },
+    "horse-happy": {
+      "sheet": "horse_happy.png",
+      "start": 0,
+      "end": 7,
+      "frameRate": 12,
+      "repeat": 0
+    },
+    "horse-pet": {
+      "sheet": "horse_pet.png",
+      "start": 0,
+      "end": 7,
+      "frameRate": 9,
+      "repeat": -1
+    }
+  }
+}

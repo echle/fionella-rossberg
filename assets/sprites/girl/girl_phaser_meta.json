@@ -1,0 +1,41 @@
+{
+  "frameWidth": 128,
+  "frameHeight": 128,
+  "animations": {
+    "girl-idle": {
+      "sheet": "girl_idle_128.png",
+      "start": 0,
+      "end": 7,
+      "frameRate": 9,
+      "repeat": -1
+    },
+    "girl-walk": {
+      "sheet": "girl_walk_128.png",
+      "start": 0,
+      "end": 7,
+      "frameRate": 12,
+      "repeat": -1
+    },
+    "girl-wave": {
+      "sheet": "girl_wave_128.png",
+      "start": 0,
+      "end": 7,
+      "frameRate": 12,
+      "repeat": 0
+    },
+    "girl-happy": {
+      "sheet": "girl_happy_128.png",
+      "start": 0,
+      "end": 7,
+      "frameRate": 12,
+      "repeat": 0
+    },
+    "girl-pet": {
+      "sheet": "girl_pet_128.png",
+      "start": 0,
+      "end": 7,
+      "frameRate": 9,
+      "repeat": -1
+    }
+  }
+}
