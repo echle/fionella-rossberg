@@ -164,7 +164,7 @@ export class UIScene extends Phaser.Scene {
     this.cooldownTimerText = this.add.text(
       badgeX,
       badgeY + 40,
-      'Ready in 30s',
+      i18nService.t('ui.game.readyIn', { seconds: '30' }),
       {
         fontSize: '14px',
         color: '#ff5722',
@@ -184,7 +184,7 @@ export class UIScene extends Phaser.Scene {
     this.resetButton = this.add.text(
       this.scale.width - 20,  // 20px from right edge
       20,                     // 20px from top
-      '🔄 Reset',
+      `🔄 ${i18nService.t('ui.buttons.reset')}`,
       {
         fontSize: '18px',
         color: '#ff6b6b',
@@ -313,7 +313,7 @@ export class UIScene extends Phaser.Scene {
       const remainingMs = state.feeding.fullUntil - now;
       const remainingSeconds = Math.ceil(remainingMs / 1000);
       
-      this.cooldownTimerText?.setText(`Ready in ${remainingSeconds}s`);
+      this.cooldownTimerText?.setText(i18nService.t('ui.game.readyIn', { seconds: remainingSeconds.toString() }));
       this.cooldownTimerText?.setVisible(true);
     } else {
       this.cooldownTimerText?.setVisible(false);
@@ -348,6 +348,11 @@ export class UIScene extends Phaser.Scene {
           i18nService.t('ui.messages.cooldownTimer', { seconds: remainingSeconds.toString() })
         );
       }
+    }
+
+    // Update reset button text
+    if (this.resetButton) {
+      this.resetButton.setText(`🔄 ${i18nService.t('ui.buttons.reset')}`);
     }
   }
 

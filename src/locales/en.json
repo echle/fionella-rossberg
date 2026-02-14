@@ -44,6 +44,7 @@
       "title": "Fionella Rossberg - Horse Care",
       "loading": "Loading...",
       "ready": "Ready!",
+      "readyIn": "Ready in {seconds}s",
       "paused": "Paused",
       "welcome": "Welcome!"
     },
