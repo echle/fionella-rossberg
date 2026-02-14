@@ -65,54 +65,69 @@ export class BootScene extends Phaser.Scene {
   }
 
   create(): void {
-    // T017: Register horse animations if sprite sheets loaded successfully
-    if (this.textures.exists('horse_idle')) {
-      this.registerHorseAnimations();
-      console.log('[BootScene] ✅ Horse sprite animations registered');
-    } else {
-      console.warn('[BootScene] ⚠️ Horse sprites unavailable, using placeholder fallback');
-    }
+      // T017: Register horse animations if sprite sheets loaded successfully
+      if (this.textures.exists('horse_idle')) {
+        this.registerHorseAnimations();
+        console.log('[BootScene] ✅ Horse sprite animations registered');
+      } else {
+        console.warn('[BootScene] ⚠️ Horse sprites unavailable, using placeholder fallback');
+      }
 
-    // Create fallback particle textures if assets are missing
-    this.createFallbackParticleTextures();
+      // Create fallback particle textures if assets are missing
+      this.createFallbackParticleTextures();
 
-    // Load saved game state if it exists
-    const loadResult = saveSystem.load();
-
-    if (loadResult) {
-      const { savedState, elapsedMs } = loadResult;
-      console.log(`[BootScene] Loading saved game (${Math.floor(elapsedMs / 1000)}s elapsed)`);
-
-      // Load the saved state into the store
-      loadGameState({
-        version: savedState.version,
-        timestamp: Date.now(), // Update to current time
-        horse: savedState.horse,
-        inventory: savedState.inventory,
-        // Feature 006 T081: Load economy state with defaults for v1.2.0 → v1.3.0 migration
-        currency: savedState.currency ?? CURRENCY.STARTING_BALANCE,
-        gameClock: savedState.gameClock ?? { startTimestamp: null },
-        giftBoxes: savedState.giftBoxes ?? [],
-        isGameOver: savedState.isGameOver ?? false,
+      // Responsive Canvas: Dynamisch an Fenstergröße anpassen
+      window.addEventListener('resize', () => {
+        const game = this.game;
+        if (game && game.scale) {
+          const minWidth = 800;
+          const minHeight = 600;
+          const maxWidth = 2560;
+          const maxHeight = 1440;
+          const w = Math.max(minWidth, Math.min(window.innerWidth, maxWidth));
+          const h = Math.max(minHeight, Math.min(window.innerHeight, maxHeight));
+          game.scale.resize(w, h);
+          console.log(`[BootScene] Canvas resized to ${w}x${h}`);
+        }
       });
 
-      // Apply decay for elapsed time
-      if (elapsedMs > 0) {
-        applyDecay(elapsedMs);
+      // Load saved game state if it exists
+      const loadResult = saveSystem.load();
+
+      if (loadResult) {
+        const { savedState, elapsedMs } = loadResult;
+        console.log(`[BootScene] Loading saved game (${Math.floor(elapsedMs / 1000)}s elapsed)`);
+
+        // Load the saved state into the store
+        loadGameState({
+          version: savedState.version,
+          timestamp: Date.now(), // Update to current time
+          horse: savedState.horse,
+          inventory: savedState.inventory,
+          // Feature 006 T081: Load economy state with defaults for v1.2.0 → v1.3.0 migration
+          currency: savedState.currency ?? CURRENCY.STARTING_BALANCE,
+          gameClock: savedState.gameClock ?? { startTimestamp: null },
+          giftBoxes: savedState.giftBoxes ?? [],
+          isGameOver: savedState.isGameOver ?? false,
+        });
+
+        // Apply decay for elapsed time
+        if (elapsedMs > 0) {
+          applyDecay(elapsedMs);
+        }
+      } else {
+        console.log('[BootScene] Starting new game');
       }
-    } else {
-      console.log('[BootScene] Starting new game');
-    }
 
-    // Feature 006 T043: Start game clock if not already started
-    const state = useGameStore.getState();
-    if (state.gameClock.startTimestamp === null) {
-      startGameClock();
-    }
+      // Feature 006 T043: Start game clock if not already started
+      const state = useGameStore.getState();
+      if (state.gameClock.startTimestamp === null) {
+        startGameClock();
+      }
 
-    // Start the main game scene
-    this.scene.start('MainGameScene');
-    this.scene.launch('UIScene');
+      // Start the main game scene
+      this.scene.start('MainGameScene');
+      this.scene.launch('UIScene');
   }
 
   /**
