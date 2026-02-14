@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { GameState, FeedingState } from './types';
-import { INITIAL_STATUS, INITIAL_INVENTORY, GAME_CONFIG } from '../config/gameConstants';
+import { INITIAL_STATUS, INITIAL_INVENTORY, GAME_CONFIG, CURRENCY } from '../config/gameConstants';
 
 export const DEFAULT_FEEDING_STATE: FeedingState = {
   isEating: false,
@@ -25,11 +25,19 @@ export const useGameStore = create<GameState>(() => ({
     selectedTool: null,
     activeAnimation: null,
     lastInteractionTime: 0,
+    lastPetTime: 0,
   },
   feeding: DEFAULT_FEEDING_STATE,
   locale: {
     language: 'de', // Default language: German
   },
+  // Feature 006: Economy System with Game Clock
+  currency: CURRENCY.STARTING_BALANCE,
+  gameClock: {
+    startTimestamp: null,  // Will be set on first play
+  },
+  giftBoxes: [],
+  isGameOver: false,
 }));
 
 // Helper to get current state

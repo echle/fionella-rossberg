@@ -2,12 +2,13 @@ import Phaser from 'phaser';
 import { StatusBar } from '../entities/StatusBar';
 import { InventoryItem } from '../entities/InventoryItem';
 import { useGameStore } from '../state/gameStore';
-import { selectTool, resetGame } from '../state/actions';
-import { GAME_CONFIG, FEEDING_CONFIG } from '../config/gameConstants';
+import { selectTool, resetGame, getElapsedSeconds } from '../state/actions';
+import { GAME_CONFIG, FEEDING_CONFIG, COOLDOWNS } from '../config/gameConstants';
 import { canFeed } from '../utils/feedingHelpers';
 import { i18nService } from '../services/i18nService';
 import { LanguageSelector } from '../components/LanguageSelector';
 import { MainGameScene } from './MainGameScene';
+import { formatGameClock } from '../utils/timeUtils';
 
 export class UIScene extends Phaser.Scene {
   private hungerBar?: StatusBar;
@@ -27,10 +28,29 @@ export class UIScene extends Phaser.Scene {
   private cooldownTimerText?: Phaser.GameObjects.Text;
   private timerEvent?: Phaser.Time.TimerEvent;
 
+  // Feature 006: Pet cooldown indicator
+  private petCooldownText?: Phaser.GameObjects.Text;
+
   // Reset button elements
   private resetButton?: Phaser.GameObjects.Text;
   private resetButtonVisible: boolean = false;
   private lastResetClickTime: number = 0;
+
+  // Feature 006: Currency display
+  private currencyText?: Phaser.GameObjects.Text;
+  private currencyIcon?: Phaser.GameObjects.Text;
+  private lastCurrencyValue: number = 0;
+
+  // Feature 006: Game clock display
+  private gameClockText?: Phaser.GameObjects.Text;
+  private gameClockTimer?: Phaser.Time.TimerEvent;
+
+  // Feature 006: Game over overlay
+  private gameOverOverlay?: Phaser.GameObjects.Container;
+  private gameOverBackground?: Phaser.GameObjects.Rectangle;
+  private gameOverTitleText?: Phaser.GameObjects.Text;
+  private gameOverMessageText?: Phaser.GameObjects.Text;
+  private gameOverResetButton?: Phaser.GameObjects.Text;
 
   constructor() {
     super({ key: 'UIScene' });
@@ -113,6 +133,24 @@ export class UIScene extends Phaser.Scene {
       }
     });
 
+    // Feature 006 T022-T023: Create currency display (bottom, right of inventory items)
+    const currencyX = centerX + 150; // Right of brush item
+    const currencyY = bottomY;
+
+    this.currencyIcon = this.add.text(currencyX - 20, currencyY, '💰', {
+      fontSize: '28px',
+    }).setOrigin(0.5);
+
+    this.currencyText = this.add.text(currencyX + 15, currencyY, '50', {
+      fontSize: '24px',
+      fontStyle: 'bold',
+      color: '#FFD700',
+      stroke: '#000000',
+      strokeThickness: 3,
+    }).setOrigin(0, 0.5);
+
+    this.lastCurrencyValue = state.currency || 50;
+
     // T035: Create LanguageSelector at top right
     this.languageSelector = new LanguageSelector(this, this.scale.width - 80, 30);
 
@@ -164,7 +202,7 @@ export class UIScene extends Phaser.Scene {
     this.cooldownTimerText = this.add.text(
       badgeX,
       badgeY + 40,
-      'Ready in 30s',
+      i18nService.t('ui.game.readyIn', { seconds: '30' }),
       {
         fontSize: '14px',
         color: '#ff5722',
@@ -180,11 +218,27 @@ export class UIScene extends Phaser.Scene {
       loop: true,
     });
 
+    // Feature 006: Create pet cooldown indicator (center-bottom, above horse)
+    this.petCooldownText = this.add.text(
+      centerX,
+      this.scale.height - 180, // Above horse position
+      '💗 Bereit in: 30s',
+      {
+        fontSize: '18px',
+        color: '#ff6b9d',
+        fontStyle: 'bold',
+        stroke: '#ffffff',
+        strokeThickness: 4,
+        shadow: { offsetX: 2, offsetY: 2, color: '#000000', blur: 4, fill: true },
+        padding: { x: 8, y: 4 },
+      }
+    ).setOrigin(0.5).setVisible(false).setDepth(100);
+
     // Create reset button (top-right corner, initially hidden)
     this.resetButton = this.add.text(
       this.scale.width - 20,  // 20px from right edge
       20,                     // 20px from top
-      '🔄 Reset',
+      `🔄 ${i18nService.t('ui.buttons.reset')}`,
       {
         fontSize: '18px',
         color: '#ff6b6b',
@@ -232,6 +286,89 @@ export class UIScene extends Phaser.Scene {
         },
       });
     });
+
+    // Feature 006 T038: Create shop button (top-left corner, always visible)
+    const shopButton = this.add.text(
+      20,  // 20px from left edge
+      20,  // 20px from top
+      `🛒 ${i18nService.t('ui.shop.button')}`,
+      {
+        fontSize: '18px',
+        color: '#FFD700',
+        fontStyle: 'bold',
+        backgroundColor: '#000000aa',
+        padding: { x: 10, y: 6 },
+      }
+    )
+      .setOrigin(0, 0)  // Left-top anchor
+      .setInteractive({ useHandCursor: true });
+
+    // Hover effect (scale up)
+    shopButton.on('pointerover', () => {
+      shopButton.setScale(1.1);
+    });
+
+    shopButton.on('pointerout', () => {
+      shopButton.setScale(1.0);
+    });
+
+    // T038: Click handler - launch ShopScene
+    shopButton.on('pointerdown', () => {
+      // Visual feedback (scale pulse)
+      this.tweens.add({
+        targets: shopButton,
+        scaleX: 0.95,
+        scaleY: 0.95,
+        duration: 100,
+        yoyo: true,
+        onComplete: () => {
+          // Launch shop scene as overlay
+          this.scene.launch('ShopScene');
+        },
+      });
+    });
+
+    // Feature 006 T044: Create game clock display (top-left, below shop button)
+    const clockX = 20;  // Align with shop button left edge
+    const clockY = 60;  // Below shop button (shop at y=20)
+
+    this.gameClockText = this.add.text(clockX, clockY, `⏱️ 00:00:00`, {
+      fontSize: '20px',
+      fontStyle: 'bold',
+      color: '#ffffff',
+      stroke: '#000000',
+      strokeThickness: 3,
+    });
+    this.gameClockText.setOrigin(0, 0); // Left-aligned
+
+    // Feature 006 T045: Timer event to update clock every 1 second
+    this.gameClockTimer = this.time.addEvent({
+      delay: 1000, // 1 second
+      callback: this.updateGameClock,
+      callbackScope: this,
+      loop: true,
+    });
+
+    // Initial clock update
+    this.updateGameClock();
+
+    // Feature 006 T062-T064: Create game over overlay (initially hidden)
+    this.createGameOverOverlay();
+
+    // T063: Subscribe to game over state changes
+    useGameStore.subscribe(
+      () => {
+        const state = useGameStore.getState();
+        if (state.isGameOver) {
+          this.showGameOverOverlay();
+        } else {
+          this.hideGameOverOverlay();
+        }
+      }
+    );
+
+    // Feature 006 T082: Listen for toast notifications
+    this.events.on('show-toast', this.showToast, this);
 
     console.log('UIScene initialized - Status bars and inventory created (centered)');
   }
@@ -313,11 +450,148 @@ export class UIScene extends Phaser.Scene {
       const remainingMs = state.feeding.fullUntil - now;
       const remainingSeconds = Math.ceil(remainingMs / 1000);
       
-      this.cooldownTimerText?.setText(`Ready in ${remainingSeconds}s`);
+      this.cooldownTimerText?.setText(i18nService.t('ui.game.readyIn', { seconds: remainingSeconds.toString() }));
       this.cooldownTimerText?.setVisible(true);
     } else {
       this.cooldownTimerText?.setVisible(false);
     }
+
+    // Feature 006: Update pet cooldown indicator
+    const timeSinceLastPet = now - state.ui.lastPetTime;
+    const petCooldownRemaining = COOLDOWNS.PET - timeSinceLastPet;
+
+    if (petCooldownRemaining > 0 && timeSinceLastPet > 0) {
+      const remainingSeconds = Math.ceil(petCooldownRemaining / 1000);
+      this.petCooldownText?.setText(`💗 ${i18nService.t('ui.game.readyIn', { seconds: remainingSeconds.toString() })}`);
+      this.petCooldownText?.setVisible(true);
+    } else {
+      this.petCooldownText?.setVisible(false);
+    }
+
+    // Feature 006 T023: Update currency display when it changes
+    const currentCurrency = state.currency;
+    if (currentCurrency !== this.lastCurrencyValue) {
+      if (this.currencyText) {
+        this.animateCurrencyCounter(this.lastCurrencyValue, currentCurrency, this.currencyText);
+      }
+      this.lastCurrencyValue = currentCurrency;
+    }
+  }
+
+  /**
+   * Feature 006: Update game clock display
+   */
+  private updateGameClock(): void {
+    const elapsedSeconds = getElapsedSeconds();
+    const clockString = formatGameClock(elapsedSeconds);
+    this.gameClockText?.setText(`⏱️ ${clockString}`);
+  }
+
+  /**
+   * Feature 006 T062: Create game over overlay
+   */
+  private createGameOverOverlay(): void {
+    const { width, height } = this.scale;
+
+    // Container for all game over elements
+    this.gameOverOverlay = this.add.container(0, 0);
+    this.gameOverOverlay.setDepth(1000); // Above everything else
+
+    // Semi-transparent dark background
+    this.gameOverBackground = this.add.rectangle(0, 0, width, height, 0x000000, 0.8);
+    this.gameOverBackground.setOrigin(0, 0);
+    this.gameOverOverlay.add(this.gameOverBackground);
+
+    // Title text
+    this.gameOverTitleText = this.add.text(width / 2, height / 2 - 60, `💔 ${i18nService.t('ui.gameOver.title')}`, {
+      fontSize: '48px',
+      fontStyle: 'bold',
+      color: '#ff6b6b',
+      stroke: '#000000',
+      strokeThickness: 4,
+    });
+    this.gameOverTitleText.setOrigin(0.5);
+    this.gameOverOverlay.add(this.gameOverTitleText);
+
+    // Message text
+    this.gameOverMessageText = this.add.text(width / 2, height / 2, i18nService.t('ui.gameOver.message'), {
+      fontSize: '24px',
+      color: '#ffffff',
+      align: 'center',
+      wordWrap: { width: width - 100 },
+    });
+    this.gameOverMessageText.setOrigin(0.5);
+    this.gameOverOverlay.add(this.gameOverMessageText);
+
+    // T064: Reset button
+    this.gameOverResetButton = this.add.text(width / 2, height / 2 + 80, `🔄 ${i18nService.t('ui.gameOver.reset')}`, {
+      fontSize: '28px',
+      fontStyle: 'bold',
+      color: '#ffffff',
+      backgroundColor: '#4CAF50',
+      padding: { x: 20, y: 10 },
+    });
+    this.gameOverResetButton.setOrigin(0.5);
+    this.gameOverResetButton.setInteractive({ useHandCursor: true });
+
+    // Hover effect
+    this.gameOverResetButton.on('pointerover', () => {
+      this.gameOverResetButton?.setScale(1.1);
+    });
+
+    this.gameOverResetButton.on('pointerout', () => {
+      this.gameOverResetButton?.setScale(1);
+    });
+
+    // Click handler - reset game
+    this.gameOverResetButton.on('pointerdown', () => {
+      resetGame();
+      
+      // Reset decay timer
+      const mainScene = this.scene.get('MainGameScene') as MainGameScene;
+      mainScene.decaySystem?.reset();
+    });
+
+    this.gameOverOverlay.add(this.gameOverResetButton);
+
+    // Initially hidden
+    this.gameOverOverlay.setVisible(false);
+  }
+
+  /**
+   * Feature 006 T063: Show game over overlay
+   */
+  private showGameOverOverlay(): void {
+    this.gameOverOverlay?.setVisible(true);
+
+    // T068, T069: Disable buttons
+    // (Already disabled by checking isGameOver in click handlers)
+  }
+
+  /**
+   * Feature 006 T063: Hide game over overlay
+   */
+  private hideGameOverOverlay(): void {
+    this.gameOverOverlay?.setVisible(false);
+  }
+
+  /**
+   * Feature 006 T024: Animate currency counter from old to new value
+   */
+  private animateCurrencyCounter(from: number, to: number, textObject: Phaser.GameObjects.Text): void {
+    // Use Phaser's addCounter for smooth number interpolation
+    this.tweens.addCounter({
+      from: from,
+      to: to,
+      duration: 500,
+      ease: 'Quad.easeOut', // NFR-001: Quadratic easing for smooth animation
+      onUpdate: (tween) => {
+        const value = tween.getValue();
+        if (value !== null) {
+          textObject.setText(Math.floor(value).toString());
+        }
+      }
+    });
   }
 
   /**
@@ -349,6 +623,72 @@ export class UIScene extends Phaser.Scene {
         );
       }
     }
+
+    // Update pet cooldown text if visible
+    if (this.petCooldownText && this.petCooldownText.visible) {
+      const state = useGameStore.getState();
+      const now = Date.now();
+      const timeSinceLastPet = now - state.ui.lastPetTime;
+      const petCooldownRemaining = COOLDOWNS.PET - timeSinceLastPet;
+      if (petCooldownRemaining > 0) {
+        const remainingSeconds = Math.ceil(petCooldownRemaining / 1000);
+        this.petCooldownText.setText(
+          `💗 ${i18nService.t('ui.game.readyIn', { seconds: remainingSeconds.toString() })}`
+        );
+      }
+    }
+
+    // Update reset button text
+    if (this.resetButton) {
+      this.resetButton.setText(`🔄 ${i18nService.t('ui.buttons.reset')}`);
+    }
+  }
+
+  /**
+   * Feature 006 T082: Show toast notification (3s duration, top-center)
+   * @param message - i18n key for the toast message
+   */
+  private showToast(message: string): void {
+    const width = this.scale.width;
+    const translatedMessage = i18nService.t(message);
+
+    // Create toast container
+    const toastBg = this.add.rectangle(width / 2, 80, 400, 60, 0x333333, 0.9);
+    toastBg.setOrigin(0.5);
+
+    const toastText = this.add.text(width / 2, 80, translatedMessage, {
+      fontSize: '18px',
+      fontStyle: 'bold',
+      color: '#FFD700',
+      align: 'center',
+      wordWrap: { width: 360 },
+    });
+    toastText.setOrigin(0.5);
+
+    // Fade in
+    toastBg.setAlpha(0);
+    toastText.setAlpha(0);
+
+    this.tweens.add({
+      targets: [toastBg, toastText],
+      alpha: 1,
+      duration: 300,
+      ease: 'Power2',
+    });
+
+    // Fade out after 3 seconds
+    this.time.delayedCall(3000, () => {
+      this.tweens.add({
+        targets: [toastBg, toastText],
+        alpha: 0,
+        duration: 500,
+        ease: 'Power2',
+        onComplete: () => {
+          toastBg.destroy();
+          toastText.destroy();
+        },
+      });
+    });
   }
 
   /**

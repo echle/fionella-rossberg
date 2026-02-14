@@ -44,6 +44,7 @@
       "title": "Fionella Rossberg - Horse Care",
       "loading": "Loading...",
       "ready": "Ready!",
+      "readyIn": "Ready in {seconds}s",
       "paused": "Paused",
       "welcome": "Welcome!"
     },
@@ -51,6 +52,32 @@
       "german": "German",
       "english": "English",
       "switchTo": "Switch to {language}"
+    },
+    "shop": {
+      "button": "Shop",
+      "title": "Shop",
+      "item": {
+        "carrot": "1 Carrot",
+        "brush_refill": "50 Brush Uses",
+        "carrot_bundle": "5 Carrots"
+      },
+      "buy": "Buy",
+      "close": "Close",
+      "tooExpensive": "Too expensive!",
+      "purchaseSuccess": "Purchased!",
+      "insufficientFunds": "Not enough Horseshoes!"
+    },
+    "currency": {
+      "label": "Horseshoes",
+      "maxReached": "Max Horseshoes reached!"
+    },
+    "gameClock": {
+      "label": "Play Time"
+    },
+    "gameOver": {
+      "title": "Game Over",
+      "message": "Your horse needs urgent care!",
+      "reset": "Reset"
     }
   }
 }

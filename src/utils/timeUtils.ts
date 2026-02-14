@@ -22,3 +22,17 @@ export function msToSeconds(ms: number): number {
 export function secondsToMs(seconds: number): number {
   return seconds * 1000;
 }
+
+/**
+ * Format elapsed seconds as HH:MM:SS
+ * @feature 006-economy-game-clock
+ * @param totalSeconds - Total elapsed seconds
+ * @returns Formatted time string (e.g., "01:23:45", "100:00:00")
+ */
+export function formatGameClock(totalSeconds: number): string {
+  const hours = Math.floor(totalSeconds / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  const seconds = totalSeconds % 60;
+  
+  return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+}

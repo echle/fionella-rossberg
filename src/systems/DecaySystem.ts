@@ -1,4 +1,4 @@
-import { applyDecay } from '../state/actions';
+import { applyDecay, checkGameOver } from '../state/actions';
 
 export class DecaySystem {
   private lastUpdateTime: number;
@@ -17,6 +17,10 @@ export class DecaySystem {
     // Apply decay every frame based on elapsed time
     if (elapsedMs > 0) {
       applyDecay(elapsedMs);
+      
+      // Feature 006 T061: Check for game over after decay
+      checkGameOver();
+      
       this.lastUpdateTime = currentTime;
     }
   }

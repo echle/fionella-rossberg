@@ -8,6 +8,7 @@ Auto-generated from all feature plans. Last updated: 2026-02-14
 - Promise-based actions, timestamp-based timing (Date.now()), lazy pruning for array cleanup (002-feeding-mechanics)
 - Phaser sprite sheets (horizontal strip layout), frame-based animations (9-12 FPS), animation state machine (enum-based) (003-visual-assets)
 - Custom i18n service (no external library), JSON-based translations (locales/de.json, locales/en.json), localStorage for language persistence (005-internationalization-i18n)
+- Timestamp-based game clock (Date.now() for accuracy), Phaser tweens for currency counter animation, threshold-based weighted random (0-99 roll) for reward distribution, ShopScene as separate overlay scene (006-economy-game-clock)
 
 ## Project Structure
 
@@ -41,6 +42,7 @@ TypeScript 5.x+ (strict mode enabled): Follow standard conventions, use async/aw
 - 002-feeding-mechanics: Added Promise-based actions (async feed()), timestamp-based timing for FPS-independent accuracy, lazy pruning pattern for recentFeedings array
 - 003-visual-assets: Added Phaser.Sprite-based rendering (replaces Image), animation registration via this.anims.create(), enum-based state machine for horse animations, bottom-center anchor (0.5, 1.0) for sprite positioning, fallback to placeholder Graphics if sprites unavailable
 - 005-internationalization-i18n: Added custom i18nService for German/English translation, translation key format (category.subcategory.key), LanguageSelector UI component in UIScene, localStorage persistence, all user-facing strings use i18nService.t()
+- 006-economy-game-clock: Added currency system (Horseshoes 🪙, earnCurrency/spendCurrency actions), ShopScene overlay for item purchases, timestamp-based game clock (HH:MM:SS display), time-based mystery gift boxes (every 5 min), game over state (all stats = 0), flat LocalStorage schema extension (currency, gameClock, giftBoxes, isGameOver)
 
 <!-- MANUAL ADDITIONS START -->
 <!-- MANUAL ADDITIONS END -->

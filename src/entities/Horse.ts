@@ -225,4 +225,25 @@ export class Horse extends Phaser.GameObjects.Container {
     }
     // T047: No-op for placeholder mode
   }
+
+  /**
+   * Feature 006 T066: Set sick/desaturated appearance for game over
+   */
+  public setSickState(isSick: boolean): void {
+    if (!this.sprite) return;
+
+    if (isSick) {
+      // Desaturate and darken sprite
+      if (this.sprite instanceof Phaser.GameObjects.Sprite) {
+        this.sprite.setTint(0x888888); // Gray tint
+        this.sprite.setAlpha(0.6); // Slightly transparent
+      }
+    } else {
+      // Restore normal appearance
+      if (this.sprite instanceof Phaser.GameObjects.Sprite) {
+        this.sprite.clearTint();
+        this.sprite.setAlpha(1);
+      }
+    }
+  }
 }

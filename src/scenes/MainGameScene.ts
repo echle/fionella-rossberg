@@ -1,9 +1,11 @@
 import Phaser from 'phaser';
 import { Horse } from '../entities/Horse';
-import { feed, groom, pet, selectTool } from '../state/actions';
+import { feed, groom, pet, selectTool, claimGiftBox } from '../state/actions';
 import { useGameStore, getGameState } from '../state/gameStore';
 import { InputSystem } from '../systems/InputSystem';
 import { DecaySystem } from '../systems/DecaySystem';
+import { GiftSpawnSystem } from '../systems/GiftSpawnSystem';
+import { GiftBox } from '../entities/GiftBox';
 import { saveSystem } from '../systems/SaveSystem';
 import { GAME_CONFIG } from '../config/gameConstants';
 import { i18nService } from '../services/i18nService';
@@ -17,6 +19,10 @@ export class MainGameScene extends Phaser.Scene {
   private autoSaveInterval?: ReturnType<typeof setInterval>;
   private lastInteractionTime: number = 0;
   private isGrooming: boolean = false; // T043: Track grooming state for animation control
+
+  // Feature 006: Gift system
+  private giftSpawnSystem?: GiftSpawnSystem;
+  private giftEntities: Map<string, GiftBox> = new Map();
 
   constructor() {
     super({ key: 'MainGameScene' });
@@ -72,10 +78,17 @@ export class MainGameScene extends Phaser.Scene {
         }
       } else if (state.ui.selectedTool === null) {
         // Pet the horse (no tool selected)
-        pet();
-        console.log('Petted horse! Happiness increased by 10');
-        this.horse?.playHappyAnimation();
-        this.spawnHearts(centerX, centerY - 50);
+        const success = pet();
+        if (success) {
+          console.log('Petted horse! Happiness increased by 10');
+          this.horse?.playHappyAnimation();
+          // Spawn heart particles in multiple bursts for extra love
+          this.spawnHearts(centerX, centerY - 50);
+          this.time.delayedCall(150, () => this.spawnHearts(centerX - 30, centerY - 40));
+          this.time.delayedCall(300, () => this.spawnHearts(centerX + 30, centerY - 40));
+        } else {
+          console.log('Pet on cooldown - wait a moment');
+        }
       }
     });
 
@@ -84,6 +97,15 @@ export class MainGameScene extends Phaser.Scene {
 
     // Setup decay system for time-based status decreases
     this.decaySystem = new DecaySystem();
+
+    // Feature 006 T048: Setup gift spawn system
+    this.giftSpawnSystem = new GiftSpawnSystem(this);
+
+    // T057: Handle missed spawns on load
+    // this.giftSpawnSystem.handleMissedSpawns(0); // Disabled for MVP - can enable in polish
+
+    // T054: Render existing gifts from state
+    this.renderGiftBoxes();
 
     // Listen for drag strokes
     this.events.on(
@@ -132,8 +154,8 @@ export class MainGameScene extends Phaser.Scene {
     });
 
     // Create particle emitter for sparkles (reusable)
-    const sparkleTexture = this.textures.exists('particle-sparkle') ? 'particle-sparkle' : '✨';
-    this.particles = this.add.particles(0, 0, sparkleTexture, {
+    // Note: particle-sparkle texture is created programmatically in BootScene if asset is missing
+    this.particles = this.add.particles(0, 0, 'particle-sparkle', {
       speed: { min: 20, max: 100 },
       scale: { start: 1, end: 0 },
       alpha: { start: 1, end: 0 },
@@ -141,25 +163,33 @@ export class MainGameScene extends Phaser.Scene {
       gravityY: -50,
       emitting: false,
     });
-    console.log(`[Particles] Using ${sparkleTexture === 'particle-sparkle' ? 'sprite' : 'emoji'} for sparkles`);
 
     // Create particle emitter for hearts (reusable)
-    const heartTexture = this.textures.exists('particle-heart') ? 'particle-heart' : '❤️';
-    this.heartParticles = this.add.particles(0, 0, heartTexture, {
-      speed: { min: 10, max: 30 },
-      scale: { start: 1, end: 0.5 },
+    // Note: particle-heart texture is created programmatically in BootScene if asset is missing
+    this.heartParticles = this.add.particles(0, 0, 'particle-heart', {
+      speed: { min: 30, max: 80 },
+      scale: { start: 1.2, end: 0.3 },
       alpha: { start: 1, end: 0 },
-      lifespan: 1000,
-      gravityY: -80,
+      lifespan: 1200,
+      gravityY: -100,
+      angle: { min: -30, max: 30 },
+      rotate: { min: -180, max: 180 },
       emitting: false,
     });
-    console.log(`[Particles] Using ${heartTexture === 'particle-heart' ? 'sprite' : 'emoji'} for hearts`);
 
     // Setup auto-save interval (every 10 seconds)
     this.autoSaveInterval = setInterval(() => {
       saveSystem.save(getGameState());
       console.log('[AutoSave] Game state saved');
     }, GAME_CONFIG.AUTO_SAVE_INTERVAL);
+
+    // Feature 006 T067: Subscribe to game over state for visual effect
+    useGameStore.subscribe(
+      () => {
+        const state = useGameStore.getState();
+        this.horse?.setSickState(state.isGameOver);
+      }
+    );
 
     console.log('MainGameScene initialized - Horse created and interactive');
   }
@@ -170,13 +200,20 @@ export class MainGameScene extends Phaser.Scene {
   }
 
   private spawnHearts(x: number, y: number): void {
-    // Emit heart particles
-    this.heartParticles?.emitParticleAt(x, y, 2);
+    // Emit more heart particles for pet action (5-8 hearts)
+    const heartCount = Phaser.Math.Between(5, 8);
+    this.heartParticles?.emitParticleAt(x, y, heartCount);
   }
 
   update(_time: number, _delta: number): void {
     // Update decay system (status values decrease over time)
     this.decaySystem?.update();
+
+    // Feature 006 T053: Check for gift spawns
+    this.giftSpawnSystem?.checkSpawnConditions();
+
+    // T054: Keep gift entities in sync with state
+    this.syncGiftEntities();
   }
 
   shutdown(): void {
@@ -188,5 +225,115 @@ export class MainGameScene extends Phaser.Scene {
 
   getHorse(): Horse | undefined {
     return this.horse;
+  }
+
+  /**
+   * Feature 006 T054: Render gift boxes from state
+   */
+  private renderGiftBoxes(): void {
+    const state = getGameState();
+
+    state.giftBoxes.forEach((gift) => {
+      if (!this.giftEntities.has(gift.id)) {
+        const giftBox = new GiftBox(this, gift.position.x, gift.position.y, gift.id);
+        
+        // T055: Handle claim event
+        giftBox.on('claim', (giftId: string) => {
+          this.handleGiftClaim(giftId);
+        });
+
+        this.giftEntities.set(gift.id, giftBox);
+      }
+    });
+  }
+
+  /**
+   * Feature 006: Sync gift entities with state
+   * Adds new gifts, removes claimed gifts
+   */
+  private syncGiftEntities(): void {
+    const state = getGameState();
+    const stateGiftIds = new Set(state.giftBoxes.map((g) => g.id));
+
+    // Remove entities that are no longer in state
+    this.giftEntities.forEach((entity, id) => {
+      if (!stateGiftIds.has(id)) {
+        entity.destroy();
+        this.giftEntities.delete(id);
+      }
+    });
+
+    // Add new entities from state
+    state.giftBoxes.forEach((gift) => {
+      if (!this.giftEntities.has(gift.id)) {
+        const giftBox = new GiftBox(this, gift.position.x, gift.position.y, gift.id);
+        
+        giftBox.on('claim', (giftId: string) => {
+          this.handleGiftClaim(giftId);
+        });
+
+        this.giftEntities.set(gift.id, giftBox);
+      }
+    });
+  }
+
+  /**
+   * Feature 006 T055 & T056: Handle gift claim with reward animation
+   */
+  private handleGiftClaim(giftId: string): void {
+    const reward = claimGiftBox(giftId);
+
+    if (reward) {
+      console.log(`[MainGameScene] Claimed gift: +${reward.amount} ${reward.type}`);
+
+      // T056: Show reward text animation
+      const giftEntity = this.giftEntities.get(giftId);
+      if (giftEntity) {
+        const rewardText = this.add.text(
+          giftEntity.x,
+          giftEntity.y,
+          `+${reward.amount} ${this.getRewardIcon(reward.type)}`,
+          {
+            fontSize: '24px',
+            fontStyle: 'bold',
+            color: '#4CAF50',
+            stroke: '#000000',
+            strokeThickness: 3,
+          }
+        );
+        rewardText.setOrigin(0.5);
+
+        // Fly up and fade out
+        this.tweens.add({
+          targets: rewardText,
+          y: rewardText.y - 80,
+          alpha: 0,
+          duration: 1500,
+          ease: 'Cubic.easeOut',
+          onComplete: () => {
+            rewardText.destroy();
+          },
+        });
+      }
+
+      // Remove from map
+      this.giftEntities.delete(giftId);
+    }
+  }
+
+  /**
+   * Get emoji icon for reward type
+   */
+  private getRewardIcon(type: 'carrots' | 'brushUses' | 'currency'): string {
+    switch (type) {
+      case 'carrots':
+        return '🥕';
+      case 'brushUses':
+        return '🪥';
+      case 'currency':
+        return '💰';
+      default:
+        return '✨';
+    }
   }
 }
