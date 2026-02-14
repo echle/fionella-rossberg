@@ -15,14 +15,16 @@ Ein browser-basiertes Pferdepflege-Simulationsspiel, bei dem du dein virtuelles 
   - Sättigungs-Badge mit Countdown-Timer
 - **🪥 Putzmechanik**: Ziehe die Bürste über dein Pferd, um die Sauberkeit zu erhöhen (mit animierter Putzreaktion)
 - **❤️ Streichel-Interaktion**: Klicke auf dein Pferd, um die Zufriedenheit zu erhöhen und Herz-Animationen mit fröhlicher Animation zu sehen
+- **🌍 Mehrsprachigkeit (i18n)**: Wähle zwischen Deutsch (Standard) und Englisch mit persistenter Sprachwahl (Feature 005)
 - **⏱️ Zeitbasierter Abbau**: Statuswerte sinken allmählich mit der Zeit und erfordern regelmäßige Pflege
+- **🔄 Reset-Funktion**: Setze das Spiel auf Anfangszustand zurück, während die Sprachwahl erhalten bleibt (Feature 004)
 - **💾 Auto-Speicher-System**: Dein Spielstand bleibt über Browser-Sitzungen hinweg mit LocalStorage erhalten
 - **📱 Responsives Design**: Spiele auf Desktop- oder Mobilgeräten mit adaptiver Skalierung (320px-2560px)
 - **✨ Visuelles Feedback**: Animierte Statusleisten, Partikeleffekte, Emoji-Reaktionen und Echtzeitindikatoren
 
 ## 🎮 Aktueller Status
 
-**🎉 MVP + Features 002-003 Abgeschlossen** - Kernfunktionen, erweiterte Fütterungsmechanik und Sprite-Animationen implementiert!
+**🎉 MVP + Features 002-005 Abgeschlossen** - Kernfunktionen, erweiterte Fütterungsmechanik, Sprite-Animationen, Reset-Button und Mehrsprachigkeit implementiert!
 
 ### ✅ Feature 001: Pferdepflege-MVP (136/136 Aufgaben)
 - ✅ Phase 1: Setup (15 Aufgaben)
@@ -45,8 +47,20 @@ Ein browser-basiertes Pferdepflege-Simulationsspiel, bei dem du dein virtuelles 
 - ✅ Phase 1: Setup (4 Aufgaben)
 - ✅ Phase 2: Grundlagen - Sprite-Laden & Animationsregistrierung (14 Aufgaben)
 - ✅ Phase 3: User Story 1 (P1) - Animierte Pferde-Sprites (35 Aufgaben)
-- 🚧 Phase 7: Feinschliff & Unit Tests (15 Aufgaben) - In Bearbeitung
+- ✅ Phase 7: Feinschliff & Unit Tests (15 Aufgaben)
 - ⏸️ Zurückgestellt: UI-Sprites (P2), Partikeleffekte (P3), Hintergrund (P4)
+
+### ✅ Feature 004: Reset-Button (Alle Aufgaben abgeschlossen)
+- ✅ Reset-Button mit Doppelklick-Schutz
+- ✅ Spielstand-Reset ohne Seitenneuladung
+- ✅ Locale-Persistenz bleibt beim Reset erhalten
+
+### ✅ Feature 005: Internationalization (i18n) (Alle Aufgaben abgeschlossen)
+- ✅ Sprachauswahl-UI (DE/EN) mit Flaggen-Icons
+- ✅ Alle UI-Texte übersetzt (Status-Labels, Buttons, Nachrichten)
+- ✅ i18nService mit Event-System für Sprachwechsel
+- ✅ LocalStorage-Persistenz der Sprachwahl
+- ✅ README auf Deutsch
 
 ## 🚀 Erste Schritte
 
@@ -94,6 +108,8 @@ Das Spiel öffnet sich unter `http://localhost:5173` (oder einem anderen verfüg
    - **Füttern**: Karotte auswählen → Pferd anklicken → Hunger steigt um 20
    - **Putzen**: Bürste auswählen → über Pferd ziehen → Sauberkeit steigt um 5 pro Strich
    - **Streicheln**: Ohne ausgewähltes Werkzeug → Pferd anklicken → Zufriedenheit steigt um 10
+   - **Sprache wechseln**: Klicke auf die Flaggen-Icons (🇩🇪/🇬🇧) oben rechts
+   - **Spiel zurücksetzen**: Doppelklicke auf "[Zurücksetzen]" unten links
 
 3. **Statusleisten überwachen** (farbcodiert grün/gelb/rot):
    - **Hunger** (oben links): Sinkt um 1 alle 6 Sekunden
@@ -129,15 +145,22 @@ horse-care-game/
 │   ├── scenes/
 │   │   ├── BootScene.ts         # Asset-Laden und Speicherwiederherstellung
 │   │   ├── MainGameScene.ts     # Primäre Gameplay-Szene mit Interaktionshandlern
-│   │   └── UIScene.ts           # Overlay-UI für Status und Inventar
+│   │   └── UIScene.ts           # Overlay-UI für Status, Inventar und Sprachauswahl
 │   ├── state/
 │   │   ├── types.ts             # TypeScript-Schnittstellen (GameState, HorseStatus, etc.)
 │   │   ├── gameStore.ts         # Zustand-Store-Initialisierung
-│   │   └── actions.ts           # Zustandsmutationsfunktionen (feed, groom, pet, decay)
+│   │   └── actions.ts           # Zustandsmutationsfunktionen (feed, groom, pet, decay, resetGame)
 │   ├── systems/
 │   │   ├── InputSystem.ts       # Drag-Gesten-Erkennung für Putzen
 │   │   ├── DecaySystem.ts       # Zeitbasierte Statusdegradation
 │   │   └── SaveSystem.ts        # LocalStorage-Persistenz mit Schema-Validierung
+│   ├── services/
+│   │   └── i18nService.ts       # Übersetzungsservice mit Event-System
+│   ├── components/
+│   │   └── LanguageSelector.ts  # Sprachauswahl-UI-Komponente (DE/EN Flaggen)
+│   ├── locales/
+│   │   ├── de.json              # Deutsche Übersetzungen
+│   │   └── en.json              # Englische Übersetzungen
 │   ├── utils/
 │   │   ├── mathUtils.ts         # clamp(), lerp()
 │   │   ├── timeUtils.ts         # Zeitkonvertierungshelfer
@@ -214,11 +237,17 @@ horse-care-game/
 Das Projekt enthält umfassende Unit-Tests, die Folgendes abdecken:
 
 - **Zustandsverwaltung** (gameStore.test.ts): Anfangszustand, Updates, partielle Änderungen, Zeitstempel-Tracking
-- **Spielaktionen** (actions.test.ts): feed(), groom(), pet(), selectTool() mit Randfällen und asynchronem Fressen
+- **Spielaktionen** (actions.test.ts): feed(), groom(), pet(), selectTool(), resetGame() mit Randfällen
 - **Fütterungshelfer** (feedingHelpers.test.ts): canFeed(), getSatietyProgress(), getRemainingCooldown(), getTimeUntilNextDecay()
 - **Abbausystem** (DecaySystem.test.ts): Zeitbasierte Berechnungen, Begrenzung, Ratenunterschiede
 - **Speichersystem** (SaveSystem.test.ts): Serialisierung, Validierung, verstrichene Zeit, Fütterungszustands-Persistenz
-- **Integrationstests** (careCycle.test.ts): End-to-End-Fütterungsmechanik (6 Tests)
+- **i18n-System** (i18nService.test.ts): Übersetzungen, Platzhalter, Sprachwechsel, Event-System
+- **Sprachauswahl** (LanguageSelector.test.ts): UI-Komponente, Klick-Handler, Persistenz
+- **Integrationstests**: 
+  - careCycle.test.ts: End-to-End-Fütterungsmechanik
+  - resetFlow.test.ts: Reset-Button-Workflow mit Locale-Persistenz
+  - languageSwitch.test.ts: Kompletter Sprachwechsel-Workflow
+  - spriteAnimations.test.ts: Sprite-Animationssystem
 
 ```bash
 # Alle Tests ausführen
@@ -234,7 +263,7 @@ npm run test:ui
 npm run test -- --watch
 ```
 
-**Teststatus**: 72 bestandene Tests  
+**Teststatus**: 190 bestandene Tests  
 **Coverage-Ziel**: ≥70% für alle Module
 
 ### Manuelle Test-Checkliste
@@ -335,7 +364,7 @@ Dieses Projekt folgt der **Spec-Driven Development**-Methodik unter Verwendung d
 3. **Aufgabenaufschlüsselung** (`/speckit.tasks`) → [tasks.md](specs/001-horse-care-mvp/tasks.md)
 4. **Implementierung** (`/speckit.implement`) ← **MVP Abgeschlossen**
 
-### Implementierungsfortschritt: 166/166 Aufgaben (100%)
+### Implementierungsfortschritt: Alle Features Abgeschlossen (100%)
 
 **Feature 001 - Pferdepflege-MVP**:
 - ✅ Phase 1: Setup (15 Aufgaben)
@@ -353,6 +382,22 @@ Dieses Projekt folgt der **Spec-Driven Development**-Methodik unter Verwendung d
 - ✅ User Story 2: Sättigungslimit-System (5 Aufgaben)
 - ✅ User Story 3: Visuelles Feedback (7 Aufgaben)
 - ✅ Feinschliff & Validierung (6 Aufgaben)
+
+**Feature 003 - Visuelle Asset-Integration**:
+- ✅ Sprite-Laden & Animationsregistrierung
+- ✅ Animierte Pferde-Sprites (idle, eating, grooming, happy)
+- ✅ Fallback-Modus für fehlende Assets
+
+**Feature 004 - Reset-Button**:
+- ✅ Reset-Button-UI mit Doppelklick-Schutz
+- ✅ Kompletter Spielstand-Reset
+- ✅ Locale-Persistenz beim Reset
+
+**Feature 005 - Internationalization (i18n)**:
+- ✅ i18nService mit Event-System
+- ✅ Sprachauswahl-UI (DE/EN Flaggen)
+- ✅ Alle UI-Texte übersetzt
+- ✅ LocalStorage-Persistenz
 
 ## 🤝 Mitwirken
 
