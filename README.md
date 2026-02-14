@@ -1,382 +1,380 @@
-# 🐴 Fionella's Horse Care Game MVP
+# 🐴 Fionellas Pferdepflege-Spiel MVP
 
-A browser-based horse care simulation game where you feed, groom, and pet your virtual horse to keep it happy and healthy.
+Ein browser-basiertes Pferdepflege-Simulationsspiel, bei dem du dein virtuelles Pferd fütterst, putzt und streichelst, um es glücklich und gesund zu halten.
 
 ![Horse Care Game](https://img.shields.io/badge/Status-MVP_Complete-brightgreen) ![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue) ![Phaser](https://img.shields.io/badge/Phaser-3.80-orange)
 
-## ✨ Features
+## ✨ Funktionen
 
-- **🐴 Virtual Horse Companion**: Interact with your horse in a vibrant stable environment with professional sprite animations
-- **🎬 Sprite-Based Animations**: Frame-based animations for idle, eating, grooming, and happy states (Feature 003)
-- **🥕 Enhanced Feeding System**: 
-  - Timed eating animation (2.5s) with visual progress bar
-  - Satiety limit (3 carrots) with 30-second cooldown
-  - Smart decay (10s per carrot) prevents permanent lockout
-  - Fullness badge with countdown timer
-- **🪥 Grooming Mechanic**: Drag across your horse with a brush to boost cleanliness (with animated grooming response)
-- **❤️ Petting Interaction**: Click your horse to increase happiness and see heart animations with happy animation
-- **⏱️ Time-Based Decay**: Status values decrease gradually over time, requiring regular care
-- **💾 Auto-Save System**: Your game state persists across browser sessions with LocalStorage
-- **📱 Responsive Design**: Play on desktop or mobile devices with adaptive scaling (320px-2560px)
-- **✨ Visual Feedback**: Animated status bars, particle effects, emoji reactions, and real-time indicators
+- **🐴 Virtueller Pferdegefährte**: Interagiere mit deinem Pferd in einer lebendigen Stallumgebung mit professionellen Sprite-Animationen
+- **🎬 Sprite-basierte Animationen**: Frame-basierte Animationen für Leerlauf, Fressen, Putzen und fröhliche Zustände (Feature 003)
+- **🥕 Erweitertes Fütterungssystem**: 
+  - Zeitgesteuerte Fressanimation (2,5s) mit visueller Fortschrittsanzeige
+  - Sättigungslimit (3 Karotten) mit 30-Sekunden-Abklingzeit
+  - Intelligenter Abbau (10s pro Karotte) verhindert permanente Sperrung
+  - Sättigungs-Badge mit Countdown-Timer
+- **🪥 Putzmechanik**: Ziehe die Bürste über dein Pferd, um die Sauberkeit zu erhöhen (mit animierter Putzreaktion)
+- **❤️ Streichel-Interaktion**: Klicke auf dein Pferd, um die Zufriedenheit zu erhöhen und Herz-Animationen mit fröhlicher Animation zu sehen
+- **⏱️ Zeitbasierter Abbau**: Statuswerte sinken allmählich mit der Zeit und erfordern regelmäßige Pflege
+- **💾 Auto-Speicher-System**: Dein Spielstand bleibt über Browser-Sitzungen hinweg mit LocalStorage erhalten
+- **📱 Responsives Design**: Spiele auf Desktop- oder Mobilgeräten mit adaptiver Skalierung (320px-2560px)
+- **✨ Visuelles Feedback**: Animierte Statusleisten, Partikeleffekte, Emoji-Reaktionen und Echtzeitindikatoren
 
-## 🎮 Current Status
+## 🎮 Aktueller Status
 
-**🎉 MVP + Features 002-003 Complete** - Core features, enhanced feeding mechanics, and sprite animations implemented!
+**🎉 MVP + Features 002-003 Abgeschlossen** - Kernfunktionen, erweiterte Fütterungsmechanik und Sprite-Animationen implementiert!
 
-### ✅ Feature 001: Horse Care MVP (136/136 tasks)
-- ✅ Phase 1: Setup (15 tasks)
-- ✅ Phase 2: Foundation (11 tasks)
-- ✅ Phase 3: US1 View Horse (14 tasks)
-- ✅ Phase 4: US2 Feed (20 tasks)
-- ✅ Phase 5: US3 Groom (20 tasks)
-- ✅ Phase 6: US4 Pet (12 tasks)
-- ✅ Phase 7: US5 Decay (9 tasks)
-- ✅ Phase 8: Persistence (13 tasks)
-- ✅ Phase 9: Polish (21 tasks)
+### ✅ Feature 001: Pferdepflege-MVP (136/136 Aufgaben)
+- ✅ Phase 1: Setup (15 Aufgaben)
+- ✅ Phase 2: Grundlagen (11 Aufgaben)
+- ✅ Phase 3: US1 Pferd ansehen (14 Aufgaben)
+- ✅ Phase 4: US2 Füttern (20 Aufgaben)
+- ✅ Phase 5: US3 Putzen (20 Aufgaben)
+- ✅ Phase 6: US4 Streicheln (12 Aufgaben)
+- ✅ Phase 7: US5 Abbau (9 Aufgaben)
+- ✅ Phase 8: Speicherung (13 Aufgaben)
+- ✅ Phase 9: Feinschliff (21 Aufgaben)
 
-### ✅ Feature 002: Enhanced Feeding Mechanics (30/30 tasks)
-- ✅ User Story 1: Timed eating animation (12 tasks)
-- ✅ User Story 2: Satiety limit system (5 tasks)
-- ✅ User Story 3: Visual feedback (7 tasks)
-- ✅ Polish & Validation (6 tasks)
+### ✅ Feature 002: Erweiterte Fütterungsmechanik (30/30 Aufgaben)
+- ✅ User Story 1: Zeitgesteuerte Fressanimation (12 Aufgaben)
+- ✅ User Story 2: Sättigungslimit-System (5 Aufgaben)
+- ✅ User Story 3: Visuelles Feedback (7 Aufgaben)
+- ✅ Feinschliff & Validierung (6 Aufgaben)
 
-### ✅ Feature 003: Visual Asset Integration  (52/67 tasks MVP scope)
-- ✅ Phase 1: Setup (4 tasks)
-- ✅ Phase 2: Foundation - Sprite loading & animation registration (14 tasks)
-- ✅ Phase 3: User Story 1 (P1) - Animated Horse Sprites (35 tasks)
-- 🚧 Phase 7: Polish & Unit Tests (15 tasks) - In progress
-- ⏸️ Deferr
+### ✅ Feature 003: Visuelle Asset-Integration (52/67 Aufgaben MVP-Umfang)
+- ✅ Phase 1: Setup (4 Aufgaben)
+- ✅ Phase 2: Grundlagen - Sprite-Laden & Animationsregistrierung (14 Aufgaben)
+- ✅ Phase 3: User Story 1 (P1) - Animierte Pferde-Sprites (35 Aufgaben)
+- 🚧 Phase 7: Feinschliff & Unit Tests (15 Aufgaben) - In Bearbeitung
+- ⏸️ Zurückgestellt: UI-Sprites (P2), Partikeleffekte (P3), Hintergrund (P4)
 
-ed: UI sprites (P2), Particle effects (P3), Background (P4)
+## 🚀 Erste Schritte
 
-## 🚀 Getting Started
-
-### Prerequisites
-- Node.js 18+ (LTS recommended)
-- npm, yarn, or pnpm
-- Modern web browser (Chrome, Firefox, Safari, Edge)
+### Voraussetzungen
+- Node.js 18+ (LTS empfohlen)
+- npm, yarn oder pnpm
+- Moderner Webbrowser (Chrome, Firefox, Safari, Edge)
 
 ### Installation
 
 ```bash
-# Clone the repository
+# Repository klonen
 git clone <repository-url>
 cd horse-care-game
 
-# Install dependencies
+# Abhängigkeiten installieren
 npm install
 
-# Start development server
+# Entwicklungsserver starten
 npm run dev
 ```
 
-The game will open at `http://localhost:5173` (or another available port).
+Das Spiel öffnet sich unter `http://localhost:5173` (oder einem anderen verfügbaren Port).
 
-### Available Scripts
+### Verfügbare Skripte
 
-- `npm run dev` - Start Vite dev server with hot-reload
-- `npm run build` - Build for production (output: dist/)
-- `npm run preview` - Preview production build locally
-- `npm test` - Run Vitest unit tests
-- `npm run test:ui` - Run tests with interactive UI
-- `npm run test:coverage` - Generate coverage report (target: ≥70%)
-- `npm run lint` - Run ESLint on all TypeScript files
-- `npm run format` - Format code with Prettier
+- `npm run dev` - Vite-Entwicklungsserver mit Hot-Reload starten
+- `npm run build` - Für Produktion bauen (Ausgabe: dist/)
+- `npm run preview` - Produktions-Build lokal ansehen
+- `npm test` - Vitest Unit-Tests ausführen
+- `npm run test:ui` - Tests mit interaktiver UI ausführen
+- `npm run test:coverage` - Coverage-Bericht erstellen (Ziel: ≥70%)
+- `npm run lint` - ESLint auf allen TypeScript-Dateien ausführen
+- `npm run format` - Code mit Prettier formatieren
 
-## 🎮 How to Play
+## 🎮 Spielanleitung
 
-### Basic Controls
+### Grundlegende Steuerung
 
-1. **Select a Tool**:
-   - Click the **🥕 Carrot** icon to select the feeding tool
-   - Click the **🪥 Brush** icon to select the grooming tool
+1. **Werkzeug auswählen**:
+   - Klicke auf das **🥕 Karotten**-Symbol, um das Fütterungswerkzeug auszuwählen
+   - Klicke auf das **🪥 Bürsten**-Symbol, um das Putzwerkzeug auszuwählen
 
-2. **Interact with Your Horse**:
-   - **Feed**: Select carrot → click horse → hunger increases by 20
-   - **Groom**: Select brush → drag across horse → cleanliness increases by 5 per stroke
-   - **Pet**: With no tool selected → click horse → happiness increases by 10
+2. **Mit deinem Pferd interagieren**:
+   - **Füttern**: Karotte auswählen → Pferd anklicken → Hunger steigt um 20
+   - **Putzen**: Bürste auswählen → über Pferd ziehen → Sauberkeit steigt um 5 pro Strich
+   - **Streicheln**: Ohne ausgewähltes Werkzeug → Pferd anklicken → Zufriedenheit steigt um 10
 
-3. **Monitor Status Bars** (color-coded green/yellow/red):
-   - **Hunger** (top-left): Decreases by 1 every 6 seconds
-   - **Cleanliness** (top-center): Decreases by 1 every 12 seconds
-   - **Happiness** (top-right): Decreases by 1 every 7.5 seconds
+3. **Statusleisten überwachen** (farbcodiert grün/gelb/rot):
+   - **Hunger** (oben links): Sinkt um 1 alle 6 Sekunden
+   - **Sauberkeit** (oben mittig): Sinkt um 1 alle 12 Sekunden
+   - **Zufriedenheit** (oben rechts): Sinkt um 1 alle 7,5 Sekunden
 
-4. **Manage Resources**:
-   - Start with 10 carrots and 100 brush uses
-   - Tools become unavailable when depleted (grayed out with 30% opacity)
+4. **Ressourcen verwalten**:
+   - Starte mit 10 Karotten und 100 Bürstennutzungen
+   - Werkzeuge werden nicht verfügbar, wenn sie aufgebraucht sind (ausgegraut mit 30% Deckkraft)
 
-### Game Mechanics
+### Spielmechaniken
 
-- **Decay System**: Status values automatically decrease over time based on decay rates
-- **Status Clamping**: Values range from 0-100 (cannot go negative or exceed maximum)
-- **Auto-Save**: Game state saves automatically:
-  - Every 10 seconds
-  - After each interaction (feed/groom/pet)
-  - When closing/refreshing the browser tab (beforeunload event)
-- **Elapsed Time**: When you return after being away, decay applies retroactively based on time passed
+- **Abbausystem**: Statuswerte sinken automatisch mit der Zeit basierend auf Abbauraten
+- **Status-Begrenzung**: Werte liegen zwischen 0-100 (können nicht negativ werden oder das Maximum überschreiten)
+- **Auto-Speichern**: Spielstand wird automatisch gespeichert:
+  - Alle 10 Sekunden
+  - Nach jeder Interaktion (Füttern/Putzen/Streicheln)
+  - Beim Schließen/Aktualisieren des Browser-Tabs (beforeunload-Event)
+- **Verstrichene Zeit**: Wenn du nach einer Pause zurückkehrst, wird der Abbau rückwirkend basierend auf der verstrichenen Zeit angewendet
 
-## 📁 Project Structure
+## 📁 Projektstruktur
 
 ```
 horse-care-game/
 ├── src/
 │   ├── config/
-│   │   ├── phaserConfig.ts      # Phaser game configuration (800x600, FIT scale)
-│   │   └── gameConstants.ts     # Balance tuning values (decay rates, increments)
+│   │   ├── phaserConfig.ts      # Phaser-Spielkonfiguration (800x600, FIT-Skalierung)
+│   │   └── gameConstants.ts     # Balance-Tuning-Werte (Abbauraten, Inkremente)
 │   ├── entities/
-│   │   ├── Horse.ts             # Horse sprite with playEatingAnimation/playHappyAnimation
-│   │   ├── StatusBar.ts         # UI status bar component (color-coded, smooth tweens)
-│   │   └── InventoryItem.ts     # Inventory slot component (selection highlight, gray-out)
+│   │   ├── Horse.ts             # Pferde-Sprite mit playEatingAnimation/playHappyAnimation
+│   │   ├── StatusBar.ts         # UI-Statusleisten-Komponente (farbcodiert, sanfte Tweens)
+│   │   └── InventoryItem.ts     # Inventarplatz-Komponente (Auswahl-Highlight, Ausgrauen)
 │   ├── scenes/
-│   │   ├── BootScene.ts         # Asset loading and save restoration
-│   │   ├── MainGameScene.ts     # Primary gameplay scene with interaction handlers
-│   │   └── UIScene.ts           # Overlay UI for status and inventory
+│   │   ├── BootScene.ts         # Asset-Laden und Speicherwiederherstellung
+│   │   ├── MainGameScene.ts     # Primäre Gameplay-Szene mit Interaktionshandlern
+│   │   └── UIScene.ts           # Overlay-UI für Status und Inventar
 │   ├── state/
-│   │   ├── types.ts             # TypeScript interfaces (GameState, HorseStatus, etc.)
-│   │   ├── gameStore.ts         # Zustand store initialization
-│   │   └── actions.ts           # State mutation functions (feed, groom, pet, decay)
+│   │   ├── types.ts             # TypeScript-Schnittstellen (GameState, HorseStatus, etc.)
+│   │   ├── gameStore.ts         # Zustand-Store-Initialisierung
+│   │   └── actions.ts           # Zustandsmutationsfunktionen (feed, groom, pet, decay)
 │   ├── systems/
-│   │   ├── InputSystem.ts       # Drag gesture detection for grooming
-│   │   ├── DecaySystem.ts       # Time-based status degradation
-│   │   └── SaveSystem.ts        # LocalStorage persistence with schema validation
+│   │   ├── InputSystem.ts       # Drag-Gesten-Erkennung für Putzen
+│   │   ├── DecaySystem.ts       # Zeitbasierte Statusdegradation
+│   │   └── SaveSystem.ts        # LocalStorage-Persistenz mit Schema-Validierung
 │   ├── utils/
 │   │   ├── mathUtils.ts         # clamp(), lerp()
-│   │   ├── timeUtils.ts         # Time conversion helpers
-│   │   └── feedingHelpers.ts    # Satiety calculations (canFeed, getSatietyProgress, etc.)
-│   └── main.ts                  # Entry point (Phaser initialization + beforeunload save)
+│   │   ├── timeUtils.ts         # Zeitkonvertierungshelfer
+│   │   └── feedingHelpers.ts    # Sättigungsberechnungen (canFeed, getSatietyProgress, etc.)
+│   └── main.ts                  # Einstiegspunkt (Phaser-Initialisierung + beforeunload-Speicherung)
 ├── tests/
-│   ├── unit/                    # Unit tests (gameStore, actions, DecaySystem, SaveSystem)
-│   └── integration/             # Integration tests
+│   ├── unit/                    # Unit-Tests (gameStore, actions, DecaySystem, SaveSystem)
+│   └── integration/             # Integrationstests
 ├── public/
-│   ├── index.html               # HTML entry point
-│   └── manifest.json            # PWA manifest
-├── specs/                       # Specification documents
+│   ├── index.html               # HTML-Einstiegspunkt
+│   └── manifest.json            # PWA-Manifest
+├── specs/                       # Spezifikationsdokumente
 │   ├── 001-horse-care-mvp/
-│   │   ├── spec.md              # Feature requirements
-│   │   ├── plan.md              # Implementation plan with technical decisions
-│   │   ├── tasks.md             # Task breakdown (136 tasks)
-│   │   ├── data-model.md        # Entity definitions
-│   │   ├── quickstart.md        # Developer integration guide
-│   │   └── contracts/           # API contracts and schemas
+│   │   ├── spec.md              # Feature-Anforderungen
+│   │   ├── plan.md              # Implementierungsplan mit technischen Entscheidungen
+│   │   ├── tasks.md             # Aufgabenaufschlüsselung (136 Aufgaben)
+│   │   ├── data-model.md        # Entitätsdefinitionen
+│   │   ├── quickstart.md        # Entwickler-Integrationsleitfaden
+│   │   └── contracts/           # API-Verträge und Schemas
 │   └── 002-feeding-mechanics/
-│       ├── spec.md              # Enhanced feeding feature requirements
-│       ├── plan.md              # Technical implementation details
-│       ├── tasks.md             # Task breakdown (30 tasks)
-│       ├── data-model.md        # FeedingState schema
-│       ├── research.md          # Technical decisions
-│       ├── quickstart.md        # Developer integration guide
-│       └── contracts/           # Feeding API contracts
+│       ├── spec.md              # Erweiterte Fütterungs-Feature-Anforderungen
+│       ├── plan.md              # Technische Implementierungsdetails
+│       ├── tasks.md             # Aufgabenaufschlüsselung (30 Aufgaben)
+│       ├── data-model.md        # FeedingState-Schema
+│       ├── research.md          # Technische Entscheidungen
+│       ├── quickstart.md        # Entwickler-Integrationsleitfaden
+│       └── contracts/           # Fütterungs-API-Verträge
 ├── package.json
 ├── tsconfig.json
 ├── vite.config.ts
 └── vitest.config.ts
 ```
 
-## 🎯 MVP Features
+## 🎯 MVP-Features
 
-### User Stories (All Implemented)
+### User Stories (Alle Implementiert)
 
 **Feature 001 - MVP**:
-1. ✅ **P1 - View Horse**: See horse sprite with 3 color-coded status bars (Hunger, Cleanliness, Happiness)
-2. ✅ **P2 - Feed**: Select carrot from inventory and feed horse (eating animation)
-3. ✅ **P3 - Groom**: Select brush and drag across horse to groom (sparkle particles)
-4. ✅ **P4 - Pet**: Click/tap horse to increase happiness (heart animations)
-5. ✅ **P5 - Decay**: Status values decrease over time with retroactive catch-up
-6. ✅ **P6 - Persistence**: Auto-save to LocalStorage with elapsed time restoration
+1. ✅ **P1 - Pferd ansehen**: Sieh das Pferde-Sprite mit 3 farbcodierten Statusleisten (Hunger, Sauberkeit, Zufriedenheit)
+2. ✅ **P2 - Füttern**: Wähle Karotte aus dem Inventar und füttere das Pferd (Fressanimation)
+3. ✅ **P3 - Putzen**: Wähle Bürste und ziehe über das Pferd zum Putzen (Glitzerpartikel)
+4. ✅ **P4 - Streicheln**: Klicke/Tippe auf das Pferd, um die Zufriedenheit zu erhöhen (Herz-Animationen)
+5. ✅ **P5 - Abbau**: Statuswerte sinken mit der Zeit mit rückwirkendem Aufholen
+6. ✅ **P6 - Persistenz**: Auto-Speicherung in LocalStorage mit Wiederherstellung der verstrichenen Zeit
 
-**Feature 002 - Enhanced Feeding**:
-1. ✅ **US1 - Timed Eating**: 2.5s eating animation with progress bar, spam prevention
-2. ✅ **US2 - Satiety Limit**: 3-carrot limit, 30s cooldown, 10s decay per carrot
-3. ✅ **US3 - Visual Feedback**: Progress bar, fullness badge (🍽️), countdown timer, grayed icons
+**Feature 002 - Erweiterte Fütterung**:
+1. ✅ **US1 - Zeitgesteuertes Fressen**: 2,5s Fressanimation mit Fortschrittsanzeige, Spam-Prävention
+2. ✅ **US2 - Sättigungslimit**: 3-Karotten-Limit, 30s Abklingzeit, 10s Abbau pro Karotte
+3. ✅ **US3 - Visuelles Feedback**: Fortschrittsanzeige, Sättigungs-Badge (🍽️), Countdown-Timer, ausgegraute Symbole
 
-### Game Mechanics
-- **Starting Inventory**: 10 carrots, 100 brush uses
-- **Status Range**: 0-100 for all stats (clamped)
-- **Decay Rates**:
-  - Hunger: -1 per 6 seconds (~10 min to 0)
-  - Cleanliness: -1 per 12 seconds (~20 min to 0)
-  - Happiness: -1 per 7.5 seconds (~12.5 min to 0)
-- **Action Effects**:
-  - Feed: +20 hunger, -1 carrot, eating animation
-  - Groom: +5 cleanliness per stroke, -1 brush use, sparkles
-  - Pet: +10 happiness (unlimited, no cost), hearts
+### Spielmechaniken
+- **Start-Inventar**: 10 Karotten, 100 Bürstennutzungen
+- **Statusbereich**: 0-100 für alle Statistiken (begrenzt)
+- **Abbauraten**:
+  - Hunger: -1 pro 6 Sekunden (~10 Min bis 0)
+  - Sauberkeit: -1 pro 12 Sekunden (~20 Min bis 0)
+  - Zufriedenheit: -1 pro 7,5 Sekunden (~12,5 Min bis 0)
+- **Aktionseffekte**:
+  - Füttern: +20 Hunger, -1 Karotte, Fressanimation
+  - Putzen: +5 Sauberkeit pro Strich, -1 Bürstennutzung, Glitzer
+  - Streicheln: +10 Zufriedenheit (unbegrenzt, keine Kosten), Herzen
 
-### Save System
-- **Auto-Save Triggers**:
-  - Every 10 seconds (time-based interval)
-  - After each interaction (feed/groom/pet)
-  - On tab close/refresh (beforeunload event)
-- **Elapsed Time Handling**: Decay applies retroactively when loading saved game
+### Speichersystem
+- **Auto-Speicher-Auslöser**:
+  - Alle 10 Sekunden (zeitbasiertes Intervall)
+  - Nach jeder Interaktion (Füttern/Putzen/Streicheln)
+  - Beim Schließen/Aktualisieren des Tabs (beforeunload-Event)
+- **Behandlung verstrichener Zeit**: Abbau wird rückwirkend beim Laden des gespeicherten Spiels angewendet
 
-## 🧪 Testing
+## 🧪 Tests
 
-### Unit Tests
+### Unit-Tests
 
-The project includes comprehensive unit tests covering:
+Das Projekt enthält umfassende Unit-Tests, die Folgendes abdecken:
 
-- **State Management** (gameStore.test.ts): Initial state, updates, partial changes, timestamp tracking
-- **Game Actions** (actions.test.ts): feed(), groom(), pet(), selectTool() with edge cases and async eating
-- **Feeding Helpers** (feedingHelpers.test.ts): canFeed(), getSatietyProgress(), getRemainingCooldown(), getTimeUntilNextDecay()
-- **Decay System** (DecaySystem.test.ts): Time-based calculations, clamping, rate differences
-- **Save System** (SaveSystem.test.ts): Serialization, validation, elapsed time, feeding state persistence
-- **Integration Tests** (careCycle.test.ts): End-to-end feeding mechanics (6 tests)
+- **Zustandsverwaltung** (gameStore.test.ts): Anfangszustand, Updates, partielle Änderungen, Zeitstempel-Tracking
+- **Spielaktionen** (actions.test.ts): feed(), groom(), pet(), selectTool() mit Randfällen und asynchronem Fressen
+- **Fütterungshelfer** (feedingHelpers.test.ts): canFeed(), getSatietyProgress(), getRemainingCooldown(), getTimeUntilNextDecay()
+- **Abbausystem** (DecaySystem.test.ts): Zeitbasierte Berechnungen, Begrenzung, Ratenunterschiede
+- **Speichersystem** (SaveSystem.test.ts): Serialisierung, Validierung, verstrichene Zeit, Fütterungszustands-Persistenz
+- **Integrationstests** (careCycle.test.ts): End-to-End-Fütterungsmechanik (6 Tests)
 
 ```bash
-# Run all tests
+# Alle Tests ausführen
 npm test
 
-# Run with coverage report
+# Mit Coverage-Bericht ausführen
 npm run test:coverage
 
-# Interactive test UI
+# Interaktive Test-UI
 npm run test:ui
 
-# Watch mode for development
+# Watch-Modus für Entwicklung
 npm run test -- --watch
 ```
 
-**Test Status**: 72 passing tests  
-**Coverage Target**: ≥70% for all modules
+**Teststatus**: 72 bestandene Tests  
+**Coverage-Ziel**: ≥70% für alle Module
 
-### Manual Testing Checklist
+### Manuelle Test-Checkliste
 
-1. **Feeding**: Click carrot → click horse → verify 2.5s eating animation with progress bar
-2. **Satiety Limit**: Feed 3 carrots → verify fullness badge (🍽️) appears with countdown
-3. **Cooldown**: After 3 carrots → verify carrot grayed out for 30 seconds
-4. **Decay**: Wait 10s → verify satiety decreases by 1 carrot, cooldown updates
-5. **Grooming**: Click brush → drag on horse → verify cleanliness increases, sparkles appear
-6. **Petting**: Click horse (no tool) → verify happiness increases, hearts appear
-7. **Decay**: Wait 60 seconds → verify all status values decrease by expected amounts
-8. **Persistence**: Feed 3 carrots → refresh page → verify cooldown persists
-9. **Resource Depletion**: Use all carrots → verify icon grays out, clicking does nothing
-10. **Status Clamping**: Feed at 90 hunger → verify caps at 100, doesn't exceed
+1. **Füttern**: Klicke Karotte → Klicke Pferd → Überprüfe 2,5s Fressanimation mit Fortschrittsanzeige
+2. **Sättigungslimit**: Füttere 3 Karotten → Überprüfe, dass Sättigungs-Badge (🍽️) mit Countdown erscheint
+3. **Abklingzeit**: Nach 3 Karotten → Überprüfe, dass Karotte 30 Sekunden lang ausgegraut ist
+4. **Abbau**: Warte 10s → Überprüfe, dass Sättigung um 1 Karotte sinkt, Abklingzeit aktualisiert wird
+5. **Putzen**: Klicke Bürste → Ziehe über Pferd → Überprüfe, dass Sauberkeit steigt, Glitzer erscheinen
+6. **Streicheln**: Klicke Pferd (kein Werkzeug) → Überprüfe, dass Zufriedenheit steigt, Herzen erscheinen
+7. **Abbau**: Warte 60 Sekunden → Überprüfe, dass alle Statuswerte um erwartete Beträge sinken
+8. **Persistenz**: Füttere 3 Karotten → Seite aktualisieren → Überprüfe, dass Abklingzeit bestehen bleibt
+9. **Ressourcenerschöpfung**: Verwende alle Karotten → Überprüfe, dass Symbol ausgegraut wird, Klicken nichts bewirkt
+10. **Statusbegrenzung**: Füttere bei 90 Hunger → Überprüfe, dass bei 100 gedeckelt wird, nicht überschreitet
 
-## 🛠️ Development Workflow
+## 🛠️ Entwicklungs-Workflow
 
-### Current Status: All Features Complete ✅
+### Aktueller Status: Alle Features Abgeschlossen ✅
 
-The game is fully functional with all MVP features and enhanced feeding mechanics:
+Das Spiel ist voll funktionsfähig mit allen MVP-Features und erweiterter Fütterungsmechanik:
 
 ```bash
 npm run dev
 ```
 
-Expected output:
-- Vite dev server starts on http://localhost:5173
-- Browser shows stable with horse, status bars, and inventory
-- Feeding shows 2.5s eating animation with progress bar
-- After 3 carrots, fullness badge (🍽️) appears with countdown timer
-- All 72 tests passing
+Erwartete Ausgabe:
+- Vite-Entwicklungsserver startet auf http://localhost:5173
+- Browser zeigt Stall mit Pferd, Statusleisten und Inventar
+- Fütterung zeigt 2,5s Fressanimation mit Fortschrittsanzeige
+- Nach 3 Karotten erscheint Sättigungs-Badge (🍽️) mit Countdown-Timer
+- Alle 72 Tests bestehen
 
-### Implementation Complete
-- ✅ Feature 001: Horse Care MVP (136 tasks)
-- ✅ Feature 002: Enhanced Feeding Mechanics (30 tasks)
-- ✅ Total: 166 tasks completed
+### Implementierung Abgeschlossen
+- ✅ Feature 001: Pferdepflege-MVP (136 Aufgaben)
+- ✅ Feature 002: Erweiterte Fütterungsmechanik (30 Aufgaben)
+- ✅ Gesamt: 166 Aufgaben abgeschlossen
 
-## 📚 Technical Stack
+## 📚 Technologie-Stack
 
-### Core Technologies
+### Kerntechnologien
 
-- **[Phaser 3.80+](https://phaser.io/)**: WebGL/Canvas game engine with Scene system, Input Manager, Tweens
-- **[TypeScript 5+](https://www.typescriptlang.org/)**: Type-safe development with strict mode
-- **[Zustand 4.x](https://github.com/pmndrs/zustand)**: Lightweight state management (<1KB)
-- **[Vite 5](https://vitejs.dev/)**: Fast development server with HMR and optimized production builds
+- **[Phaser 3.80+](https://phaser.io/)**: WebGL/Canvas-Spiel-Engine mit Scene-System, Input-Manager, Tweens
+- **[TypeScript 5+](https://www.typescriptlang.org/)**: Typsichere Entwicklung mit Strict-Modus
+- **[Zustand 4.x](https://github.com/pmndrs/zustand)**: Leichtgewichtige Zustandsverwaltung (<1KB)
+- **[Vite 5](https://vitejs.dev/)**: Schneller Entwicklungsserver mit HMR und optimierten Produktions-Builds
 
-### Development Tools
+### Entwicklungswerkzeuge
 
-- **[Vitest 1](https://vitest.dev/)**: Unit testing with jsdom environment
-- **[ESLint](https://eslint.org/)**: Code linting with TypeScript support
-- **[Prettier](https://prettier.io/)**: Code formatting
-- **[vite-plugin-pwa](https://vite-pwa-org.netlify.app/)**: Progressive Web App support
+- **[Vitest 1](https://vitest.dev/)**: Unit-Testing mit jsdom-Umgebung
+- **[ESLint](https://eslint.org/)**: Code-Linting mit TypeScript-Unterstützung
+- **[Prettier](https://prettier.io/)**: Code-Formatierung
+- **[vite-plugin-pwa](https://vite-pwa-org.netlify.app/)**: Progressive-Web-App-Unterstützung
 
-### Architecture
+### Architektur
 
-- **Entity-Component Pattern**: Modular game object structure
-- **Separation of Concerns**: Rendering (Phaser) decoupled from state (Zustand) for testability
-- **Pure Functions**: Game logic is predictable and unit-testable
-- **Responsive Scaling**: FIT scale mode (320px-2560px supported)
-- **Canvas Resolution**: 800x600 base with adaptive scaling
+- **Entity-Component-Pattern**: Modulare Spielobjektstruktur
+- **Trennung der Anliegen**: Rendering (Phaser) entkoppelt von Zustand (Zustand) für Testbarkeit
+- **Pure Functions**: Spiellogik ist vorhersagbar und unit-testbar
+- **Responsive Skalierung**: FIT-Skalierungsmodus (320px-2560px unterstützt)
+- **Canvas-Auflösung**: 800x600 Basis mit adaptiver Skalierung
 
-## 🎨 Placeholder Assets
+## 🎨 Platzhalter-Assets
 
-**MVP Strategy**: The game uses placeholder graphics for rapid prototyping:
+**MVP-Strategie**: Das Spiel verwendet Platzhalter-Grafiken für schnelles Prototyping:
 
-- **Horse Sprite**: Brown circle (#8B4513, 200px diameter) with 🐴 emoji overlay
-- **Icons**: Unicode emojis (🥕 carrot, 🪥 brush, ✨ sparkles, ❤️ hearts)
-- **Background**: Phaser.Graphics gradient (sky blue #87CEEB → grass green #90EE90)
-- **Status Bars**: Phaser.Graphics rectangles with rounded corners, color-coded by value
-- **Animations**: Phaser.Tween-based (scale/position changes, no sprite sheets)
+- **Pferde-Sprite**: Brauner Kreis (#8B4513, 200px Durchmesser) mit 🐴 Emoji-Overlay
+- **Symbole**: Unicode-Emojis (🥕 Karotte, 🪥 Bürste, ✨ Glitzer, ❤️ Herzen)
+- **Hintergrund**: Phaser.Graphics-Verlauf (Himmelblau #87CEEB → Grasgrün #90EE90)
+- **Statusleisten**: Phaser.Graphics-Rechtecke mit abgerundeten Ecken, farbcodiert nach Wert
+- **Animationen**: Phaser.Tween-basiert (Skalierungs-/Positionsänderungen, keine Sprite-Sheets)
 
-**Future Enhancement**: Placeholder assets can be replaced with professional sprites without code changes (see [plan.md Decision 7](specs/001-horse-care-mvp/plan.md) Phase B).
+**Zukünftige Verbesserung**: Platzhalter-Assets können ohne Codeänderungen durch professionelle Sprites ersetzt werden (siehe [plan.md Decision 7](specs/001-horse-care-mvp/plan.md) Phase B).
 
-## 🚧 Known Limitations (MVP Scope)
+## 🚧 Bekannte Einschränkungen (MVP-Umfang)
 
-- No music or sound effects
-- No advanced animations (sprite sheets)
-- Limited to single horse (no multi-pet system)
-- No inventory refill mechanism (carrots/brushes are finite)
-- No achievement or progression system
-- Desktop-first design (mobile is functional but not optimized for touch)
+- Keine Musik oder Soundeffekte
+- Keine erweiterten Animationen (Sprite-Sheets)
+- Begrenzt auf ein einzelnes Pferd (kein Multi-Haustier-System)
+- Kein Inventar-Nachfüllmechanismus (Karotten/Bürsten sind endlich)
+- Kein Erfolgs- oder Fortschrittssystem
+- Desktop-First-Design (Mobile ist funktional, aber nicht für Touch optimiert)
 
-## 📖 Documentation
+## 📚 Dokumentation
 
-- [Specification](specs/001-horse-care-mvp/spec.md) - Feature requirements and user stories
-- [Implementation Plan](specs/001-horse-care-mvp/plan.md) - Technical decisions and architecture
-- [Task Breakdown](specs/001-horse-care-mvp/tasks.md) - Development tasks (136 total)
-- [Data Model](specs/001-horse-care-mvp/data-model.md) - Entity definitions and relationships
-- [Quick Start Guide](specs/001-horse-care-mvp/quickstart.md) - Developer integration guide
-- [Contracts](specs/001-horse-care-mvp/contracts/) - API specifications and schemas
+- [Spezifikation](specs/001-horse-care-mvp/spec.md) - Feature-Anforderungen und User Stories
+- [Implementierungsplan](specs/001-horse-care-mvp/plan.md) - Technische Entscheidungen und Architektur
+- [Aufgabenaufschlüsselung](specs/001-horse-care-mvp/tasks.md) - Entwicklungsaufgaben (136 insgesamt)
+- [Datenmodell](specs/001-horse-care-mvp/data-model.md) - Entitätsdefinitionen und Beziehungen
+- [Schnellstartanleitung](specs/001-horse-care-mvp/quickstart.md) - Entwickler-Integrationsleitfaden
+- [Verträge](specs/001-horse-care-mvp/contracts/) - API-Spezifikationen und Schemas
 
-## 🛠️ Development Workflow
+## 🛠️ Entwicklungs-Workflow
 
-This project follows **Spec-Driven Development** using the `/speckit` methodology:
+Dieses Projekt folgt der **Spec-Driven Development**-Methodik unter Verwendung der `/speckit`-Methodik:
 
-1. **Specification** (`/speckit.specify`) → [spec.md](specs/001-horse-care-mvp/spec.md)
-2. **Planning** (`/speckit.plan`) → [plan.md](specs/001-horse-care-mvp/plan.md)
-3. **Task Breakdown** (`/speckit.tasks`) → [tasks.md](specs/001-horse-care-mvp/tasks.md)
-4. **Implementation** (`/speckit.implement`) ← **MVP Complete**
+1. **Spezifikation** (`/speckit.specify`) → [spec.md](specs/001-horse-care-mvp/spec.md)
+2. **Planung** (`/speckit.plan`) → [plan.md](specs/001-horse-care-mvp/plan.md)
+3. **Aufgabenaufschlüsselung** (`/speckit.tasks`) → [tasks.md](specs/001-horse-care-mvp/tasks.md)
+4. **Implementierung** (`/speckit.implement`) ← **MVP Abgeschlossen**
 
-### Implementation Progress: 166/166 Tasks (100%)
+### Implementierungsfortschritt: 166/166 Aufgaben (100%)
 
-**Feature 001 - Horse Care MVP**:
-- ✅ Phase 1: Setup (15 tasks)
-- ✅ Phase 2: Foundation (11 tasks)
-- ✅ Phase 3: US1 View Horse (14 tasks)
-- ✅ Phase 4: US2 Feed (20 tasks)
-- ✅ Phase 5: US3 Groom (20 tasks)
-- ✅ Phase 6: US4 Pet (12 tasks)
-- ✅ Phase 7: US5 Decay (9 tasks)
-- ✅ Phase 8: Persistence (13 tasks)
-- ✅ Phase 9: Polish (21 tasks)
+**Feature 001 - Pferdepflege-MVP**:
+- ✅ Phase 1: Setup (15 Aufgaben)
+- ✅ Phase 2: Grundlagen (11 Aufgaben)
+- ✅ Phase 3: US1 Pferd ansehen (14 Aufgaben)
+- ✅ Phase 4: US2 Füttern (20 Aufgaben)
+- ✅ Phase 5: US3 Putzen (20 Aufgaben)
+- ✅ Phase 6: US4 Streicheln (12 Aufgaben)
+- ✅ Phase 7: US5 Abbau (9 Aufgaben)
+- ✅ Phase 8: Speicherung (13 Aufgaben)
+- ✅ Phase 9: Feinschliff (21 Aufgaben)
 
-**Feature 002 - Enhanced Feeding Mechanics**:
-- ✅ User Story 1: Timed eating animation (12 tasks)
-- ✅ User Story 2: Satiety limit system (5 tasks)
-- ✅ User Story 3: Visual feedback (7 tasks)
-- ✅ Polish & Validation (6 tasks)
+**Feature 002 - Erweiterte Fütterungsmechanik**:
+- ✅ User Story 1: Zeitgesteuerte Fressanimation (12 Aufgaben)
+- ✅ User Story 2: Sättigungslimit-System (5 Aufgaben)
+- ✅ User Story 3: Visuelles Feedback (7 Aufgaben)
+- ✅ Feinschliff & Validierung (6 Aufgaben)
 
-## 🤝 Contributing
+## 🤝 Mitwirken
 
-Found an issue? Have a feature suggestion?
+Ein Problem gefunden? Hast du einen Feature-Vorschlag?
 
-1. Check existing issues in the repository
-2. Open a new issue with clear reproduction steps
-3. For contributions, please follow the TypeScript style guide and include tests
+1. Überprüfe bestehende Issues im Repository
+2. Öffne ein neues Issue mit klaren Reproduktionsschritten
+3. Für Beiträge befolge bitte den TypeScript-Style-Guide und füge Tests hinzu
 
-## 📝 License
+## 📝 Lizenz
 
-MIT License - see LICENSE file for details
+MIT-Lizenz - siehe LICENSE-Datei für Details
 
 ## 🐴 Credits
 
-**Game Design**: Fionella Rossberg  
-**Development Methodology**: Spec-Driven Development with `/speckit` workflow  
-**Game Engine**: [Phaser](https://phaser.io/) by Photon Storm  
-**State Management**: [Zustand](https://github.com/pmndrs/zustand) by Piotr Monowski  
-**Build Tool**: [Vite](https://vitejs.dev/) by Evan You  
-**Type Safety**: [TypeScript](https://www.typescriptlang.org/) by Microsoft
+**Spieldesign**: Fionella Rossberg  
+**Entwicklungsmethodik**: Spec-Driven Development mit `/speckit`-Workflow  
+**Spiel-Engine**: [Phaser](https://phaser.io/) von Photon Storm  
+**Zustandsverwaltung**: [Zustand](https://github.com/pmndrs/zustand) von Piotr Monowski  
+**Build-Tool**: [Vite](https://vitejs.dev/) von Evan You  
+**Typsicherheit**: [TypeScript](https://www.typescriptlang.org/) von Microsoft
 
 ---
 
-**Enjoy caring for your virtual horse! 🐴✨**
+**Viel Spaß bei der Pflege deines virtuellen Pferdes! 🐴✨**

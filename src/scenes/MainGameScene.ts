@@ -6,6 +6,7 @@ import { InputSystem } from '../systems/InputSystem';
 import { DecaySystem } from '../systems/DecaySystem';
 import { saveSystem } from '../systems/SaveSystem';
 import { GAME_CONFIG } from '../config/gameConstants';
+import { i18nService } from '../services/i18nService';
 
 export class MainGameScene extends Phaser.Scene {
   private horse?: Horse;

@@ -1,21 +1,15 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { useGameStore, DEFAULT_FEEDING_STATE } from '../../src/state/gameStore';
 import { resetGame } from '../../src/state/actions';
-import { SaveSystem } from '../../src/systems/SaveSystem';
+import { saveSystem } from '../../src/systems/SaveSystem';
 import { DecaySystem } from '../../src/systems/DecaySystem';
 import { INITIAL_STATUS, INITIAL_INVENTORY, GAME_CONFIG } from '../../src/config/gameConstants';
 
 describe('Reset Flow Integration', () => {
-  let saveSystem: SaveSystem;
-  const testStorageKey = 'test-reset-flow-save';
-
   beforeEach(() => {
     vi.useFakeTimers();
     // Clear localStorage before each test
     localStorage.clear();
-
-    // Create fresh SaveSystem instance with test key
-    saveSystem = new SaveSystem(testStorageKey);
 
     // Reset store to initial state before each test
     useGameStore.setState({
@@ -36,7 +30,15 @@ describe('Reset Flow Integration', () => {
         activeAnimation: null,
         lastInteractionTime: 0,
       },
+      locale: {
+        language: 'de',
+      },
     });
+  });
+
+  afterEach(() => {
+    // Restore all mocks after each test to prevent leakage
+    vi.restoreAllMocks();
   });
 
   // T020: Test for button visibility when resources exhausted
@@ -140,16 +142,23 @@ describe('Reset Flow Integration', () => {
     });
 
     it('should persist reset state to localStorage', () => {
-      // Deplete resources
+      // Clear localStorage before test
+      localStorage.clear();
+      
+      // Setup: Deplete resources to trigger reset scenario
       useGameStore.setState({
         horse: { hunger: 5, cleanliness: 10, happiness: 15 },
         inventory: { carrots: 0, brushUses: 0 },
       });
 
-      // Reset game (should trigger saveSystem.save internally)
+      // Call resetGame which should save to localStorage
       resetGame();
-
-      // Verify state was saved
+      
+      // Verify state was persisted to localStorage
+      const rawData = localStorage.getItem('fionella-horse-game-save');
+      expect(rawData).not.toBeNull();
+      
+      // Verify the saved data is valid
       const loadResult = saveSystem.load();
       expect(loadResult).not.toBe(null);
       expect(loadResult?.savedState.inventory.carrots).toBe(INITIAL_INVENTORY.CARROTS);

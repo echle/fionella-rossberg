@@ -70,6 +70,9 @@ export interface GameState {
   inventory: Inventory;
   ui: UIState;
   feeding: FeedingState;
+  locale: {
+    language: string;  // Current language: "de" or "en"
+  };
 }
 
 export interface SavedGameState {
@@ -78,4 +81,36 @@ export interface SavedGameState {
   horse: HorseStatus;
   inventory: Inventory;
   feeding: FeedingState;
+  locale: {
+    language: string;
+  };
+}
+
+/**
+ * Translation data structure - nested object for hierarchical keys
+ * @feature 005-internationalization-i18n
+ */
+export interface Translation {
+  [key: string]: string | Translation;
+}
+
+/**
+ * Language configuration
+ * @feature 005-internationalization-i18n
+ */
+export interface LanguageConfig {
+  code: string;           // e.g., "de", "en"
+  name: string;          // e.g., "Deutsch", "English"
+  flag?: string;         // Icon/Emoji (optional)
+  isDefault: boolean;
+}
+
+/**
+ * Locale state for i18n system
+ * @feature 005-internationalization-i18n
+ */
+export interface LocaleState {
+  currentLanguage: string;  // e.g., "de" or "en"
+  availableLanguages: string[];
+  translations: Record<string, Translation>;
 }

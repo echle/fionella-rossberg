@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import { saveSystem } from '../systems/SaveSystem';
 import { loadGameState, applyDecay } from '../state/actions';
+import { i18nService } from '../services/i18nService';
 
 export class BootScene extends Phaser.Scene {
   constructor() {

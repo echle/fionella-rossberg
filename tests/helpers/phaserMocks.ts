@@ -1,6 +1,40 @@
 /**
  * Test utilities for Phaser scene mocking
  * Feature 003: Visual Asset Integration
+ * 
+ * CRITICAL PHASER MOCK REQUIREMENTS:
+ * ===================================
+ * All Phaser GameObjects (Container, Graphics, Text, Sprite, etc.) MUST implement:
+ * 
+ * 1. Event Methods (required by Container.add()):
+ *    - once(event, callback, context?): EventEmitter
+ *    - on(event, callback, context?): EventEmitter  
+ *    - off(event, callback?, context?): EventEmitter
+ *    - emit(event, ...args): boolean
+ * 
+ * 2. Display List Methods (required by Container.add()):
+ *    - removeFromDisplayList(): void
+ *    - addedToScene(): void
+ * 
+ * 3. Parent Property (required by Container.add()):
+ *    - parentContainer: Container | null
+ * 
+ * WHY: When you call container.add([child1, child2]), Phaser's Container internally:
+ * - Calls child.once(Events.DESTROY, ...) to track lifecycle
+ * - Calls child.removeFromDisplayList() to remove from scene display list
+ * - Calls child.addedToScene() after adding to container
+ * - Sets child.parentContainer = this
+ * 
+ * If any of these methods/properties are missing, tests will fail with:
+ * - "gameObject.once is not a function"
+ * - "gameObject.removeFromDisplayList is not a function"
+ * - "Cannot read properties of undefined"
+ * 
+ * USE THE HELPER FUNCTIONS:
+ * - createMockContainer() for containers
+ * - createMockGraphics() for graphics
+ * - createMockText() for text objects
+ * - createMockSprite() for sprites
  */
 
 import { vi } from 'vitest';
@@ -69,20 +103,13 @@ export function createMockScene(options?: {
         return createMockGraphics();
       }),
       text: vi.fn((x, y, text, style) => {
-        return {
-          setOrigin: vi.fn().mockReturnThis(),
-          once: vi.fn().mockReturnThis(),
-          on: vi.fn().mockReturnThis(),
-          off: vi.fn().mockReturnThis(),
-          emit: vi.fn().mockReturnThis(),
-          removeFromDisplayList: vi.fn(),
-          addedToScene: vi.fn(),
-          parentContainer: null as any,
-          x,
-          y,
-          text,
-          style,
-        };
+        return createMockText(x, y, text, style);
+      }),
+      container: vi.fn((x, y) => {
+        const container = createMockContainer();
+        (container as any).x = x;
+        (container as any).y = y;
+        return container;
       }),
       existing: vi.fn((gameObject) => gameObject),
       particles: vi.fn(() => {
@@ -207,6 +234,9 @@ export function createMockGraphics() {
   return {
     fillStyle: vi.fn().mockReturnThis(),
     fillCircle: vi.fn().mockReturnThis(),
+    fillRoundedRect: vi.fn().mockReturnThis(),
+    lineStyle: vi.fn().mockReturnThis(),
+    strokeRoundedRect: vi.fn().mockReturnThis(),
     clear: vi.fn().mockReturnThis(),
     once: vi.fn().mockReturnThis(),
     on: vi.fn().mockReturnThis(),
@@ -216,6 +246,57 @@ export function createMockGraphics() {
     addedToScene: vi.fn(),
     parentContainer: null as any,
   } as unknown as Phaser.GameObjects.Graphics;
+}
+
+/**
+ * Creates a mock Phaser.GameObjects.Container
+ * 
+ * IMPORTANT: All Phaser GameObjects must implement:
+ * - Event methods: once(), on(), off(), emit()
+ * - Display methods: removeFromDisplayList(), addedToScene()
+ * - Property: parentContainer
+ * 
+ * These are required by Phaser's Container when adding children via container.add()
+ */
+export function createMockContainer() {
+  const list: any[] = [];
+  return {
+    list,
+    add: vi.fn((items: any[]) => {
+      list.push(...items);
+    }),
+    setSize: vi.fn().mockReturnThis(),
+    setInteractive: vi.fn().mockReturnThis(),
+    on: vi.fn().mockReturnThis(),
+    once: vi.fn().mockReturnThis(),
+    off: vi.fn().mockReturnThis(),
+    emit: vi.fn().mockReturnThis(),
+    removeFromDisplayList: vi.fn(),
+    addedToScene: vi.fn(),
+    parentContainer: null as any,
+  } as unknown as Phaser.GameObjects.Container;
+}
+
+/**
+ * Creates a mock Phaser.GameObjects.Text
+ */
+export function createMockText(x: number, y: number, text: string, style?: any) {
+  return {
+    x,
+    y,
+    text,
+    style,
+    setOrigin: vi.fn().mockReturnThis(),
+    setAlpha: vi.fn().mockReturnThis(),
+    setText: vi.fn().mockReturnThis(),
+    once: vi.fn().mockReturnThis(),
+    on: vi.fn().mockReturnThis(),
+    off: vi.fn().mockReturnThis(),
+    emit: vi.fn().mockReturnThis(),
+    removeFromDisplayList: vi.fn(),
+    addedToScene: vi.fn(),
+    parentContainer: null as any,
+  } as unknown as Phaser.GameObjects.Text;
 }
 
 /**

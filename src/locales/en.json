@@ -1,0 +1,56 @@
+{
+  "ui": {
+    "statusBar": {
+      "hunger": "Hunger",
+      "happiness": "Happiness",
+      "energy": "Energy",
+      "cleanliness": "Cleanliness"
+    },
+    "buttons": {
+      "feed": "Feed",
+      "brush": "Brush",
+      "pet": "Pet",
+      "save": "Save",
+      "load": "Load",
+      "reset": "Reset"
+    },
+    "inventory": {
+      "apple": "Apple",
+      "carrot": "Carrot",
+      "hay": "Hay",
+      "brush": "Brush",
+      "carrots": "Carrots",
+      "brushUses": "Brush Uses"
+    },
+    "messages": {
+      "fed": "Horse was fed!",
+      "brushed": "Horse was brushed!",
+      "petted": "Horse was petted!",
+      "saved": "Game saved",
+      "loaded": "Game loaded",
+      "hungerDecreased": "Hunger: {value}%",
+      "happinessIncreased": "Happiness: {value}%",
+      "energyDecreased": "Energy: {value}%",
+      "cleanlinessDecreased": "Cleanliness: {value}%",
+      "statusUpdate": "{attribute}: {value}%",
+      "itemUsed": "{item} was used",
+      "noEnergy": "Not enough energy!",
+      "alreadyFull": "Horse is already full!",
+      "tooClean": "Horse is already clean!",
+      "carrotEaten": "Carrot eaten",
+      "horseBrushed": "Horse brushed"
+    },
+    "game": {
+      "title": "Fionella Rossberg - Horse Care",
+      "loading": "Loading...",
+      "ready": "Ready!",
+      "paused": "Paused",
+      "welcome": "Welcome!"
+    },
+    "language": {
+      "german": "German",
+      "english": "English",
+      "switchTo": "Switch to {language}"
+    }
+  }
+}
