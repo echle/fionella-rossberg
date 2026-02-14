@@ -1,4 +1,4 @@
-import { updateGameState, getGameState } from './gameStore';
+import { updateGameState, getGameState, DEFAULT_FEEDING_STATE } from './gameStore';
 import { clamp } from '../utils/mathUtils';
 import {
   STATUS_INCREMENTS,
@@ -211,5 +211,15 @@ export function resetGame(): void {
       activeAnimation: null,
       lastInteractionTime: 0,
     },
+    feeding: {
+      isEating: false,
+      eatStartTime: null,
+      recentFeedings: [],
+      fullUntil: null,
+    },
   }));
+
+  // Persist reset state
+  saveSystem.save(getGameState());
+  console.log('Game reset to initial state');
 }

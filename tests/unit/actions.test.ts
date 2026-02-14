@@ -1,7 +1,8 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { useGameStore, DEFAULT_FEEDING_STATE } from '../../src/state/gameStore';
-import { feed, selectTool, groom, pet } from '../../src/state/actions';
+import { feed, selectTool, groom, pet, resetGame } from '../../src/state/actions';
 import { INITIAL_STATUS, INITIAL_INVENTORY } from '../../src/config/gameConstants';
+import { saveSystem } from '../../src/systems/SaveSystem';
 
 describe('Actions', () => {
   beforeEach(() => {
@@ -204,6 +205,93 @@ describe('Actions', () => {
 
       const state = useGameStore.getState();
       expect(state.ui.activeAnimation).toBe('happy');
+    });
+  });
+
+  describe('resetGame', () => {
+    beforeEach(() => {
+      // Mock saveSystem.save to prevent actual localStorage interaction
+      vi.spyOn(saveSystem, 'save').mockImplementation(() => {});
+      vi.spyOn(console, 'log').mockImplementation(() => {});
+    });
+
+    // T015: Test for resetGame() horse status reset
+    it('should reset horse status to initial values', () => {
+      // Modify horse stats
+      useGameStore.setState({
+        horse: { hunger: 10, cleanliness: 20, happiness: 30 },
+      });
+
+      resetGame();
+
+      const state = useGameStore.getState();
+      expect(state.horse.hunger).toBe(INITIAL_STATUS.HUNGER);
+      expect(state.horse.cleanliness).toBe(INITIAL_STATUS.CLEANLINESS);
+      expect(state.horse.happiness).toBe(INITIAL_STATUS.HAPPINESS);
+    });
+
+    // T016: Test for resetGame() inventory reset
+    it('should reset inventory to initial values', () => {
+      // Deplete inventory
+      useGameStore.setState({
+        inventory: { carrots: 0, brushUses: 0 },
+      });
+
+      resetGame();
+
+      const state = useGameStore.getState();
+      expect(state.inventory.carrots).toBe(INITIAL_INVENTORY.CARROTS);
+      expect(state.inventory.brushUses).toBe(INITIAL_INVENTORY.BRUSH_USES);
+    });
+
+    // T017: Test for resetGame() feeding state reset
+    it('should reset feeding state to default', () => {
+      // Modify feeding state
+      useGameStore.setState({
+        feeding: {
+          isEating: true,
+          eatStartTime: Date.now(),
+          recentFeedings: [Date.now() - 1000, Date.now() - 2000],
+          fullUntil: Date.now() + 5000,
+        },
+      });
+
+      resetGame();
+
+      const state = useGameStore.getState();
+      expect(state.feeding.isEating).toBe(false);
+      expect(state.feeding.eatStartTime).toBe(null);
+      expect(state.feeding.recentFeedings).toEqual([]);
+      expect(state.feeding.fullUntil).toBe(null);
+    });
+
+    // T018: Test for resetGame() UI state reset
+    it('should reset UI state to initial values', () => {
+      // Modify UI state
+      useGameStore.setState({
+        ui: {
+          selectedTool: 'carrot',
+          activeAnimation: 'eating',
+          lastInteractionTime: Date.now(),
+        },
+      });
+
+      resetGame();
+
+      const state = useGameStore.getState();
+      expect(state.ui.selectedTool).toBe(null);
+      expect(state.ui.activeAnimation).toBe(null);
+      expect(state.ui.lastInteractionTime).toBe(0);
+    });
+
+    // T019: Test for resetGame() saves to localStorage
+    it('should save state to localStorage after reset', () => {
+      const saveSpy = vi.spyOn(saveSystem, 'save');
+
+      resetGame();
+
+      expect(saveSpy).toHaveBeenCalledTimes(1);
+      expect(saveSpy).toHaveBeenCalledWith(useGameStore.getState());
     });
   });
 });

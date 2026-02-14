@@ -9,7 +9,7 @@ import { GAME_CONFIG } from '../config/gameConstants';
 
 export class MainGameScene extends Phaser.Scene {
   private horse?: Horse;
-  private decaySystem?: DecaySystem;
+  public decaySystem?: DecaySystem;
   private particles?: Phaser.GameObjects.Particles.ParticleEmitter;
   private heartParticles?: Phaser.GameObjects.Particles.ParticleEmitter;
   private horseHitArea?: Phaser.Geom.Circle;
