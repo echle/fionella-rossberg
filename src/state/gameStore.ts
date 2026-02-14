@@ -27,6 +27,9 @@ export const useGameStore = create<GameState>(() => ({
     lastInteractionTime: 0,
   },
   feeding: DEFAULT_FEEDING_STATE,
+  locale: {
+    language: 'de', // Default language: German
+  },
 }));
 
 // Helper to get current state

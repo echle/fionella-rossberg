@@ -11,6 +11,7 @@ import { msToSeconds } from '../utils/timeUtils';
 import { ToolType } from './types';
 import { saveSystem } from '../systems/SaveSystem';
 import { canFeed, pruneExpiredFeedings, calculateSatietyCount } from '../utils/feedingHelpers';
+import { i18nService } from '../services/i18nService';
 
 /**
  * Select or deselect a tool

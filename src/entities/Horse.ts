@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import { FEEDING_CONFIG, SPRITE_CONFIG } from '../config/gameConstants';
 import type { HorseAnimationState } from '../state/types';
+import { i18nService } from '../services/i18nService';
 
 /**
  * Horse entity with sprite-based animations

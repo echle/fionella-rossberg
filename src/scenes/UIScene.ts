@@ -5,6 +5,8 @@ import { useGameStore } from '../state/gameStore';
 import { selectTool } from '../state/actions';
 import { GAME_CONFIG, FEEDING_CONFIG } from '../config/gameConstants';
 import { canFeed } from '../utils/feedingHelpers';
+import { i18nService } from '../services/i18nService';
+import { LanguageSelector } from '../components/LanguageSelector';
 
 export class UIScene extends Phaser.Scene {
   private hungerBar?: StatusBar;
@@ -12,13 +14,14 @@ export class UIScene extends Phaser.Scene {
   private happinessBar?: StatusBar;
   private carrotItem?: InventoryItem;
   private brushItem?: InventoryItem;
+  private languageSelector?: LanguageSelector;
   private lastInventoryClickTime: number = 0;
   
   // Feeding UI elements
   private eatingProgressBg?: Phaser.GameObjects.Rectangle;
   private eatingProgressBar?: Phaser.GameObjects.Rectangle;
   private fullnessBadge?: Phaser.GameObjects.Container;
-  private fullnessBadgeCircle?: Phaser.GameObjects.Circle;
+  private fullnessBadgeCircle?: Phaser.GameObjects.Arc;
   private fullnessBadgeText?: Phaser.GameObjects.Text;
   private cooldownTimerText?: Phaser.GameObjects.Text;
   private timerEvent?: Phaser.Time.TimerEvent;
@@ -34,14 +37,14 @@ export class UIScene extends Phaser.Scene {
 
     // Create status bars vertically stacked, horizontally centered
     // Hunger (top)
-    this.hungerBar = new StatusBar(this, centerX - 100, startY, 'Hunger', 0xff9800);
+    this.hungerBar = new StatusBar(this, centerX - 100, startY, i18nService.t('ui.statusBar.hunger'), 0xff9800);
 
     // Cleanliness (middle)
     this.cleanlinessBar = new StatusBar(
       this,
       centerX - 100,
       startY + barSpacing,
-      'Cleanliness',
+      i18nService.t('ui.statusBar.cleanliness'),
       0x2196f3
     );
 
@@ -50,7 +53,7 @@ export class UIScene extends Phaser.Scene {
       this,
       centerX - 100,
       startY + barSpacing * 2,
-      'Happiness',
+      i18nService.t('ui.statusBar.happiness'),
       0xe91e63
     );
 
@@ -103,6 +106,12 @@ export class UIScene extends Phaser.Scene {
         selectTool('brush');
       }
     });
+
+    // T035: Create LanguageSelector at top right
+    this.languageSelector = new LanguageSelector(this, this.scale.width - 80, 30);
+
+    // T036: Listen for language changes and update all text
+    i18nService.on('languageChanged', this.handleLanguageChanged.bind(this));
 
     // T018: Create eating progress bar (initially hidden)
     // Position: Center of screen, below status bars, above horse
@@ -227,5 +236,44 @@ export class UIScene extends Phaser.Scene {
     } else {
       this.cooldownTimerText?.setVisible(false);
     }
+  }
+
+  /**
+   * T037: Handle language change event - update all UI text
+   */
+  private handleLanguageChanged(newLanguage: string): void {
+    console.log(`[UIScene] Language changed to ${newLanguage}, updating UI text`);
+
+    // Update status bar labels
+    if (this.hungerBar) {
+      (this.hungerBar as any).labelText?.setText(i18nService.t('ui.statusBar.hunger'));
+    }
+    if (this.cleanlinessBar) {
+      (this.cleanlinessBar as any).labelText?.setText(i18nService.t('ui.statusBar.cleanliness'));
+    }
+    if (this.happinessBar) {
+      (this.happinessBar as any).labelText?.setText(i18nService.t('ui.statusBar.happiness'));
+    }
+
+    // Update cooldown timer text if visible
+    if (this.cooldownTimerText && this.cooldownTimerText.visible) {
+      const state = useGameStore.getState();
+      const now = Date.now();
+      if (state.feeding.fullUntil !== null && now < state.feeding.fullUntil) {
+        const remainingMs = state.feeding.fullUntil - now;
+        const remainingSeconds = Math.ceil(remainingMs / 1000);
+        this.cooldownTimerText.setText(
+          i18nService.t('ui.messages.cooldownTimer', { seconds: remainingSeconds.toString() })
+        );
+      }
+    }
+  }
+
+  /**
+   * Clean up event listeners when scene is destroyed
+   */
+  shutdown(): void {
+    i18nService.off('languageChanged', this.handleLanguageChanged.bind(this));
+    this.timerEvent?.destroy();
   }
 }

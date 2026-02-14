@@ -1,6 +1,7 @@
 import { GameState, SavedGameState } from '../state/types';
 import { GAME_CONFIG, FEEDING_CONFIG } from '../config/gameConstants';
 import { pruneExpiredFeedings } from '../utils/feedingHelpers';
+import { i18nService } from '../services/i18nService';
 
 /**
  * SaveSystem handles game state persistence to LocalStorage with elapsed time restoration

@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import { ToolType } from '../state/types';
 import { useGameStore } from '../state/gameStore';
+import { i18nService } from '../services/i18nService';
 
 export class InventoryItem extends Phaser.GameObjects.Container {
   private background: Phaser.GameObjects.Graphics;

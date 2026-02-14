@@ -1,0 +1,56 @@
+{
+  "ui": {
+    "statusBar": {
+      "hunger": "Hunger",
+      "happiness": "Glück",
+      "energy": "Energie",
+      "cleanliness": "Sauberkeit"
+    },
+    "buttons": {
+      "feed": "Füttern",
+      "brush": "Bürsten",
+      "pet": "Streicheln",
+      "save": "Speichern",
+      "load": "Laden",
+      "reset": "Zurücksetzen"
+    },
+    "inventory": {
+      "apple": "Apfel",
+      "carrot": "Karotte",
+      "hay": "Heu",
+      "brush": "Bürste",
+      "carrots": "Karotten",
+      "brushUses": "Bürsten-Nutzungen"
+    },
+    "messages": {
+      "fed": "Pferd wurde gefüttert!",
+      "brushed": "Pferd wurde gebürstet!",
+      "petted": "Pferd wurde gestreichelt!",
+      "saved": "Spiel gespeichert",
+      "loaded": "Spiel geladen",
+      "hungerDecreased": "Hunger: {value}%",
+      "happinessIncreased": "Glück: {value}%",
+      "energyDecreased": "Energie: {value}%",
+      "cleanlinessDecreased": "Sauberkeit: {value}%",
+      "statusUpdate": "{attribute}: {value}%",
+      "itemUsed": "{item} wurde verwendet",
+      "noEnergy": "Nicht genug Energie!",
+      "alreadyFull": "Pferd ist schon satt!",
+      "tooClean": "Pferd ist schon sauber!",
+      "carrotEaten": "Karotte gefressen",
+      "horseBrushed": "Pferd gebürstet"
+    },
+    "game": {
+      "title": "Fionella Rossberg - Pferdepflege",
+      "loading": "Lädt...",
+      "ready": "Bereit!",
+      "paused": "Pausiert",
+      "welcome": "Willkommen!"
+    },
+    "language": {
+      "german": "Deutsch",
+      "english": "Englisch",
+      "switchTo": "Wechseln zu {language}"
+    }
+  }
+}

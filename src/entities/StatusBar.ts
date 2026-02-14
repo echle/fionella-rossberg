@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import { i18nService } from '../services/i18nService';
 
 export class StatusBar extends Phaser.GameObjects.Container {
   private background: Phaser.GameObjects.Graphics;
