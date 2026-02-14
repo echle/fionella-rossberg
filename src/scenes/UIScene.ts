@@ -2,11 +2,12 @@ import Phaser from 'phaser';
 import { StatusBar } from '../entities/StatusBar';
 import { InventoryItem } from '../entities/InventoryItem';
 import { useGameStore } from '../state/gameStore';
-import { selectTool } from '../state/actions';
+import { selectTool, resetGame } from '../state/actions';
 import { GAME_CONFIG, FEEDING_CONFIG } from '../config/gameConstants';
 import { canFeed } from '../utils/feedingHelpers';
 import { i18nService } from '../services/i18nService';
 import { LanguageSelector } from '../components/LanguageSelector';
+import { MainGameScene } from './MainGameScene';
 
 export class UIScene extends Phaser.Scene {
   private hungerBar?: StatusBar;
@@ -25,6 +26,11 @@ export class UIScene extends Phaser.Scene {
   private fullnessBadgeText?: Phaser.GameObjects.Text;
   private cooldownTimerText?: Phaser.GameObjects.Text;
   private timerEvent?: Phaser.Time.TimerEvent;
+
+  // Reset button elements
+  private resetButton?: Phaser.GameObjects.Text;
+  private resetButtonVisible: boolean = false;
+  private lastResetClickTime: number = 0;
 
   constructor() {
     super({ key: 'UIScene' });
@@ -174,6 +180,59 @@ export class UIScene extends Phaser.Scene {
       loop: true,
     });
 
+    // Create reset button (top-right corner, initially hidden)
+    this.resetButton = this.add.text(
+      this.scale.width - 20,  // 20px from right edge
+      20,                     // 20px from top
+      '🔄 Reset',
+      {
+        fontSize: '18px',
+        color: '#ff6b6b',
+        fontStyle: 'bold',
+        backgroundColor: '#000000aa',
+        padding: { x: 10, y: 6 },
+      }
+    )
+      .setOrigin(1, 0)  // Right-top anchor
+      .setAlpha(0)      // Start invisible
+      .setInteractive({ useHandCursor: true });
+
+    // Hover effect (scale up)
+    this.resetButton.on('pointerover', () => {
+      this.resetButton?.setScale(1.1);
+    });
+
+    this.resetButton.on('pointerout', () => {
+      this.resetButton?.setScale(1.0);
+    });
+
+    // Click handler
+    this.resetButton.on('pointerdown', () => {
+      // Debounce check (prevent spam clicks)
+      const now = Date.now();
+      if (now - this.lastResetClickTime < 500) {
+        return;
+      }
+      this.lastResetClickTime = now;
+
+      // Visual feedback (scale pulse)
+      this.tweens.add({
+        targets: this.resetButton,
+        scaleX: 0.95,
+        scaleY: 0.95,
+        duration: 100,
+        yoyo: true,
+        onComplete: () => {
+          // Execute reset
+          resetGame();
+          
+          // Reset decay timer
+          const mainScene = this.scene.get('MainGameScene') as MainGameScene;
+          mainScene.decaySystem?.reset();
+        },
+      });
+    });
+
     console.log('UIScene initialized - Status bars and inventory created (centered)');
   }
 
@@ -217,6 +276,29 @@ export class UIScene extends Phaser.Scene {
     
     if (this.carrotItem) {
       this.carrotItem.setDisabled(isCarrotDisabled);
+    }
+
+    // T012-T014: Update reset button visibility based on inventory state
+    const shouldShow = state.inventory.carrots === 0 && state.inventory.brushUses === 0;
+    
+    if (shouldShow && !this.resetButtonVisible) {
+      // T013: Fade in reset button when resources are depleted
+      this.resetButtonVisible = true;
+      this.tweens.add({
+        targets: this.resetButton,
+        alpha: 1,
+        duration: 300,
+        ease: 'Power2'
+      });
+    } else if (!shouldShow && this.resetButtonVisible) {
+      // T014: Fade out reset button when resources are available
+      this.resetButtonVisible = false;
+      this.tweens.add({
+        targets: this.resetButton,
+        alpha: 0,
+        duration: 300,
+        ease: 'Power2'
+      });
     }
   }
 

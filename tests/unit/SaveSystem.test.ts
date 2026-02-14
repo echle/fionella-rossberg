@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { SaveSystem } from '../../src/systems/SaveSystem';
 import { GameState, SavedGameState } from '../../src/state/types';
 import { GAME_CONFIG, INITIAL_STATUS, INITIAL_INVENTORY } from '../../src/config/gameConstants';
@@ -35,7 +35,14 @@ describe('SaveSystem', () => {
         activeAnimation: null,
         lastInteractionTime: 0,
       },
+      locale: {
+        language: 'de',
+      },
     };
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
   });
 
   describe('save', () => {

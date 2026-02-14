@@ -59,6 +59,19 @@ describe('LanguageSelector', () => {
           addedToScene: vi.fn(),
           parentContainer: null,
         }),
+        rectangle: vi.fn().mockReturnValue({
+          setOrigin: vi.fn().mockReturnThis(),
+          setInteractive: vi.fn().mockReturnThis(),
+          setAlpha: vi.fn().mockReturnThis(),
+          setFillStyle: vi.fn().mockReturnThis(),
+          once: vi.fn().mockReturnThis(),
+          on: vi.fn().mockReturnThis(),
+          off: vi.fn().mockReturnThis(),
+          emit: vi.fn().mockReturnThis(),
+          removeFromDisplayList: vi.fn(),
+          addedToScene: vi.fn(),
+          parentContainer: null,
+        }),
       },
     } as any;
 

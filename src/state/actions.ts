@@ -1,4 +1,4 @@
-import { updateGameState, getGameState } from './gameStore';
+import { updateGameState, getGameState, DEFAULT_FEEDING_STATE } from './gameStore';
 import { clamp } from '../utils/mathUtils';
 import {
   STATUS_INCREMENTS,
@@ -6,6 +6,7 @@ import {
   INITIAL_STATUS,
   INITIAL_INVENTORY,
   FEEDING_CONFIG,
+  GAME_CONFIG,
 } from '../config/gameConstants';
 import { msToSeconds } from '../utils/timeUtils';
 import { ToolType } from './types';
@@ -197,7 +198,13 @@ export function loadGameState(savedState: Partial<ReturnType<typeof getGameState
  * Reset game to initial state
  */
 export function resetGame(): void {
+  const currentState = getGameState();
+  
+  // Preserve locale with fallback to default
+  const localeToPreserve = currentState.locale || { language: 'de' };
+  
   updateGameState(() => ({
+    version: GAME_CONFIG.SAVE_VERSION,
     horse: {
       hunger: INITIAL_STATUS.HUNGER,
       cleanliness: INITIAL_STATUS.CLEANLINESS,
@@ -212,5 +219,15 @@ export function resetGame(): void {
       activeAnimation: null,
       lastInteractionTime: 0,
     },
+    feeding: {
+      isEating: false,
+      eatStartTime: null,
+      recentFeedings: [],
+      fullUntil: null,
+    },
+    locale: localeToPreserve, // Preserve language setting
   }));
+
+  // Persist reset state
+  saveSystem.save(getGameState());
 }

@@ -39,8 +39,9 @@ export class SaveSystem {
           recentFeedings: prunedFeedings,
           fullUntil: gameState.feeding.fullUntil,
         },
+        locale: { ...gameState.locale },
       };
-
+      
       const serialized = JSON.stringify(savedState);
       localStorage.setItem(this.storageKey, serialized);
     } catch (error) {
@@ -107,7 +108,10 @@ export class SaveSystem {
       typeof state.feeding.isEating === 'boolean' &&
       (state.feeding.eatStartTime === null || typeof state.feeding.eatStartTime === 'number') &&
       Array.isArray(state.feeding.recentFeedings) &&
-      (state.feeding.fullUntil === null || typeof state.feeding.fullUntil === 'number')
+      (state.feeding.fullUntil === null || typeof state.feeding.fullUntil === 'number') &&
+      typeof state.locale === 'object' &&
+      state.locale !== null &&
+      typeof state.locale.language === 'string'
     );
   }
 
