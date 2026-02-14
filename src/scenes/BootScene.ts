@@ -1,7 +1,9 @@
 import Phaser from 'phaser';
 import { saveSystem } from '../systems/SaveSystem';
-import { loadGameState, applyDecay } from '../state/actions';
+import { loadGameState, applyDecay, startGameClock } from '../state/actions';
 import { i18nService } from '../services/i18nService';
+import { useGameStore } from '../state/gameStore';
+import { CURRENCY } from '../config/gameConstants';
 
 export class BootScene extends Phaser.Scene {
   constructor() {
@@ -84,6 +86,11 @@ export class BootScene extends Phaser.Scene {
         timestamp: Date.now(), // Update to current time
         horse: savedState.horse,
         inventory: savedState.inventory,
+        // Feature 006 T081: Load economy state with defaults for v1.2.0 → v1.3.0 migration
+        currency: savedState.currency ?? CURRENCY.STARTING_BALANCE,
+        gameClock: savedState.gameClock ?? { startTimestamp: null },
+        giftBoxes: savedState.giftBoxes ?? [],
+        isGameOver: savedState.isGameOver ?? false,
       });
 
       // Apply decay for elapsed time
@@ -92,6 +99,12 @@ export class BootScene extends Phaser.Scene {
       }
     } else {
       console.log('[BootScene] Starting new game');
+    }
+
+    // Feature 006 T043: Start game clock if not already started
+    const state = useGameStore.getState();
+    if (state.gameClock.startTimestamp === null) {
+      startGameClock();
     }
 
     // Start the main game scene

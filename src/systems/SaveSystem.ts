@@ -40,6 +40,11 @@ export class SaveSystem {
           fullUntil: gameState.feeding.fullUntil,
         },
         locale: { ...gameState.locale },
+        // Feature 006: Economy System with Game Clock
+        currency: gameState.currency,
+        gameClock: { ...gameState.gameClock },
+        giftBoxes: [...gameState.giftBoxes],
+        isGameOver: gameState.isGameOver,
       };
       
       const serialized = JSON.stringify(savedState);
@@ -111,7 +116,16 @@ export class SaveSystem {
       (state.feeding.fullUntil === null || typeof state.feeding.fullUntil === 'number') &&
       typeof state.locale === 'object' &&
       state.locale !== null &&
-      typeof state.locale.language === 'string'
+      typeof state.locale.language === 'string' &&
+      // Feature 006 fields (optional for backward compatibility)
+      (state.currency === undefined || typeof state.currency === 'number') &&
+      (state.gameClock === undefined || (
+        typeof state.gameClock === 'object' &&
+        state.gameClock !== null &&
+        (state.gameClock.startTimestamp === null || typeof state.gameClock.startTimestamp === 'number')
+      )) &&
+      (state.giftBoxes === undefined || Array.isArray(state.giftBoxes)) &&
+      (state.isGameOver === undefined || typeof state.isGameOver === 'boolean')
     );
   }
 

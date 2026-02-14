@@ -38,6 +38,12 @@ describe('SaveSystem', () => {
       locale: {
         language: 'de',
       },
+      currency: 50,
+      gameClock: {
+        startTimestamp: null,
+      },
+      giftBoxes: [],
+      isGameOver: false,
     };
   });
 

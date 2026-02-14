@@ -73,6 +73,11 @@ export interface GameState {
   locale: {
     language: string;  // Current language: "de" or "en"
   };
+  // Feature 006: Economy System with Game Clock
+  currency: number;                 // Horseshoes balance (0-999,999)
+  gameClock: GameClockState;        // Play session timer
+  giftBoxes: GiftBoxState[];        // Unclaimed mystery gifts (max 3)
+  isGameOver: boolean;              // All stats = 0 flag
 }
 
 export interface SavedGameState {
@@ -84,6 +89,11 @@ export interface SavedGameState {
   locale: {
     language: string;
   };
+  // Feature 006: Economy System with Game Clock
+  currency: number;
+  gameClock: GameClockState;
+  giftBoxes: GiftBoxState[];
+  isGameOver: boolean;
 }
 
 /**
@@ -113,4 +123,38 @@ export interface LocaleState {
   currentLanguage: string;  // e.g., "de" or "en"
   availableLanguages: string[];
   translations: Record<string, Translation>;
+}
+
+/**
+ * Shop item configuration
+ * @feature 006-economy-game-clock
+ */
+export interface ShopItem {
+  id: string;                    // Unique identifier (e.g., "carrot_single")
+  nameKey: string;               // i18n translation key (e.g., "shop.item.carrot")
+  icon: string;                  // Emoji or sprite key (e.g., "🥕")
+  price: number;                 // Cost in Horseshoes
+  reward: {
+    type: 'carrots' | 'brushUses' | 'currency';
+    amount: number;
+  };
+}
+
+/**
+ * Gift box state for time-based rewards
+ * @feature 006-economy-game-clock
+ */
+export interface GiftBoxState {
+  id: string;                    // Unique identifier (e.g., "gift_1707926700000")
+  spawnTime: number;             // Game clock seconds when spawned (e.g., 300 for 5 min)
+  position: { x: number; y: number };  // Screen coordinates
+  claimed: boolean;              // Whether reward has been collected
+}
+
+/**
+ * Game clock state for tracking play session
+ * @feature 006-economy-game-clock
+ */
+export interface GameClockState {
+  startTimestamp: number | null;  // Unix timestamp (ms) when clock started
 }

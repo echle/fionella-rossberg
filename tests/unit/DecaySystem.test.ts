@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { useGameStore } from '../../src/state/gameStore';
+import { useGameStore, DEFAULT_FEEDING_STATE } from '../../src/state/gameStore';
 import { applyDecay } from '../../src/state/actions';
-import { INITIAL_STATUS, INITIAL_INVENTORY, DECAY_RATES } from '../../src/config/gameConstants';
+import { INITIAL_STATUS, INITIAL_INVENTORY, DECAY_RATES, CURRENCY } from '../../src/config/gameConstants';
 
 describe('DecaySystem', () => {
   beforeEach(() => {
@@ -23,6 +23,16 @@ describe('DecaySystem', () => {
         activeAnimation: null,
         lastInteractionTime: 0,
       },
+      feeding: DEFAULT_FEEDING_STATE,
+      locale: {
+        language: 'de',
+      },
+      currency: CURRENCY.STARTING_BALANCE,
+      gameClock: {
+        startTimestamp: null,
+      },
+      giftBoxes: [],
+      isGameOver: false,
     });
   });
 

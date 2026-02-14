@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { useGameStore, getGameState, updateGameState } from '../../src/state/gameStore';
-import { INITIAL_STATUS, INITIAL_INVENTORY } from '../../src/config/gameConstants';
+import { useGameStore, getGameState, updateGameState, DEFAULT_FEEDING_STATE } from '../../src/state/gameStore';
+import { INITIAL_STATUS, INITIAL_INVENTORY, CURRENCY } from '../../src/config/gameConstants';
 
 describe('GameStore', () => {
   beforeEach(() => {
@@ -22,6 +22,16 @@ describe('GameStore', () => {
         activeAnimation: null,
         lastInteractionTime: 0,
       },
+      feeding: DEFAULT_FEEDING_STATE,
+      locale: {
+        language: 'de',
+      },
+      currency: CURRENCY.STARTING_BALANCE,
+      gameClock: {
+        startTimestamp: null,
+      },
+      giftBoxes: [],
+      isGameOver: false,
     });
   });
 

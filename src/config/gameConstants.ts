@@ -2,6 +2,8 @@
  * Game balance constants
  */
 
+import type { ShopItem } from '../state/types';
+
 // Decay rates (value decrease per interval)
 export const DECAY_RATES = {
   HUNGER: 1 / 6, // -1 per 6 seconds (~10 minutes to 0)
@@ -62,5 +64,70 @@ export const SPRITE_CONFIG = {
   FRAME_SIZE: {
     WIDTH: 512, // Each frame is 512×384px
     HEIGHT: 384,
+  },
+} as const;
+
+/**
+ * Currency system configuration
+ * @feature 006-economy-game-clock
+ */
+export const CURRENCY = {
+  STARTING_BALANCE: 50,    // Initial currency on new game
+  MAX_BALANCE: 999999,     // Cap to prevent overflow
+  REWARDS: {
+    FEED: 5,               // Horseshoes earned per feed
+    GROOM: 3,              // Horseshoes earned per groom stroke
+    PET: 2,                // Horseshoes earned per pet
+    GIFT_BONUS: 10,        // Horseshoes from gift box (20% chance)
+  },
+} as const;
+
+/**
+ * Shop items configuration
+ * @feature 006-economy-game-clock
+ */
+export const SHOP_ITEMS: ShopItem[] = [
+  {
+    id: 'carrot_single',
+    nameKey: 'ui.shop.item.carrot',
+    icon: '🥕',
+    price: 5,
+    reward: { type: 'carrots', amount: 1 },
+  },
+  {
+    id: 'brush_refill',
+    nameKey: 'ui.shop.item.brush_refill',
+    icon: '🪥',
+    price: 8,
+    reward: { type: 'brushUses', amount: 50 },
+  },
+  {
+    id: 'carrot_bundle',
+    nameKey: 'ui.shop.item.carrot_bundle',
+    icon: '📦',
+    price: 15,
+    reward: { type: 'carrots', amount: 5 },
+  },
+];
+
+/**
+ * Gift spawn configuration
+ * @feature 006-economy-game-clock
+ */
+export const GIFT_CONFIG = {
+  SPAWN_INTERVAL: 300,     // Seconds between gift spawns (5 minutes)
+  MAX_UNCLAIMED: 3,        // Maximum unclaimed gifts on screen
+  SAFE_MARGIN: 50,         // Pixels from viewport edges
+  UI_TOP_HEIGHT: 100,      // Status bars area (px)
+  UI_BOTTOM_HEIGHT: 120,   // Inventory area (px)
+  REWARD_PROBABILITIES: {
+    CARROTS: 50,           // 50% chance: 2 carrots
+    BRUSH_USES: 30,        // 30% chance: 20 brush uses
+    CURRENCY: 20,          // 20% chance: 10 Horseshoes
+  },
+  REWARD_AMOUNTS: {
+    CARROTS: 2,
+    BRUSH_USES: 20,
+    CURRENCY: 10,
   },
 } as const;

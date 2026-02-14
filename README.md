@@ -16,6 +16,11 @@ Ein browser-basiertes Pferdepflege-Simulationsspiel, bei dem du dein virtuelles 
 - **🪥 Putzmechanik**: Ziehe die Bürste über dein Pferd, um die Sauberkeit zu erhöhen (mit animierter Putzreaktion)
 - **❤️ Streichel-Interaktion**: Klicke auf dein Pferd, um die Zufriedenheit zu erhöhen und Herz-Animationen mit fröhlicher Animation zu sehen
 - **🌍 Mehrsprachigkeit (i18n)**: Wähle zwischen Deutsch (Standard) und Englisch mit persistenter Sprachwahl (Feature 005)
+- **💰 Wirtschaftssystem**: Verdiene Hufeisen durch Pflegemaßnahmen, kaufe Items im Shop, sammle Mystery Boxen alle 5 Minuten (Feature 006)
+- **🛒 In-Game Shop**: Kaufe Pflegeartikel mit deiner verdienten Währung - Pakete enthalten Karotten und Bürstenbenutzungen
+- **⏱️ Spieluhr**: Verfolge deine gesamte Spielzeit mit einer laufenden Uhr, die automatisch beim ersten Laden startet
+- **🎁 Mystery Boxen**: Sammle alle 5 Minuten automatisch erscheinende Geschenkboxen mit Zufallsbelohnungen (Karotten/Bürsten/Währung)
+- **💔 Game Over**: Das Spiel erkennt, wenn alle Statuswerte 0 erreichen, zeigt einen kranken Pferd-Zustand und bietet Reset-Option
 - **⏱️ Zeitbasierter Abbau**: Statuswerte sinken allmählich mit der Zeit und erfordern regelmäßige Pflege
 - **🔄 Neustart-Funktion**: Setze das Spiel auf Anfangszustand zurück, während die Sprachwahl erhalten bleibt (Feature 004)
 - **💾 Auto-Speicher-System**: Dein Spielstand bleibt über Browser-Sitzungen hinweg mit LocalStorage erhalten
@@ -24,7 +29,7 @@ Ein browser-basiertes Pferdepflege-Simulationsspiel, bei dem du dein virtuelles 
 
 ## 🎮 Aktueller Status
 
-**🎉 MVP + Features 002-005 Abgeschlossen** - Kernfunktionen, erweiterte Fütterungsmechanik, Sprite-Animationen, Reset-Button und Mehrsprachigkeit implementiert!
+**🎉 MVP + Features 002-006 Abgeschlossen** - Kernfunktionen, erweiterte Fütterungsmechanik, Sprite-Animationen, Reset-Button, Mehrsprachigkeit und Wirtschaftssystem implementiert!
 
 ### ✅ Feature 001: Pferdepflege-MVP (136/136 Aufgaben)
 - ✅ Phase 1: Setup (15 Aufgaben)
@@ -62,11 +67,20 @@ Ein browser-basiertes Pferdepflege-Simulationsspiel, bei dem du dein virtuelles 
 - ✅ LocalStorage-Persistenz der Sprachwahl
 - ✅ README auf Deutsch
 
+### ✅ Feature 006: Economy System + Game Clock (90/90 Aufgaben)
+- ✅ Phase 2: Grundlagen - State-Schema, Constants, i18n, SaveSystem-Erweiterung (13 Aufgaben)
+- ✅ Phase 3: US1 - Währung verdienen durch Aktionen mit animierter Anzeige (9 Aufgaben)
+- ✅ Phase 4: US2 - Shop-Modal mit Kaufsystem und Affordability-Checks (14 Aufgaben)
+- ✅ Phase 5: US3 - Spieluhr zur Verfolgung der gesamten Spielzeit (7 Aufgaben)
+- ✅ Phase 6: US4 - Mystery Boxen spawnen alle 5 Minuten mit Belohnungen (13 Aufgaben)
+- ✅ Phase 7: US5 - Game Over wenn alle Stats = 0 (11 Aufgaben)
+- ✅ Phase 8: Shop-Polish - Animationen, Hover-Effekte, Particles, Responsive Grid (10 Aufgaben)
+- ✅ Phase 9: Final Polish - Save-Migration, Max Currency Toast, Performance, i18n Validation (13 Aufgaben)
+
 ## �️ Geplante Features
 
 Sieh dir die [**ROADMAP.md**](ROADMAP.md) an für:
-- 🪙 **Feature 006**: Währungssystem + Shop (Empfohlen als nächstes)
-- 🎁 **Feature 007**: Tägliche Geschenke & zeitbasierte Drops
+- 🎁 **Feature 007**: Tägliche Geschenke & erweiterte zeitbasierte Drops
 - ⭐ **Feature 008**: Quest/Achievement-System
 - 🥕 **Feature 009**: Mini-Garten für Karotten-Anbau
 - 🎯 **Feature 010**: Geschicklichkeits-Minispiele

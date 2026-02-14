@@ -52,6 +52,32 @@
       "german": "Deutsch",
       "english": "Englisch",
       "switchTo": "Wechseln zu {language}"
+    },
+    "shop": {
+      "button": "Laden",
+      "title": "Laden",
+      "item": {
+        "carrot": "1 Karotte",
+        "brush_refill": "50 Bürsten",
+        "carrot_bundle": "5 Karotten"
+      },
+      "buy": "Kaufen",
+      "close": "Schließen",
+      "tooExpensive": "Zu teuer!",
+      "purchaseSuccess": "Gekauft!",
+      "insufficientFunds": "Nicht genug Hufeisen!"
+    },
+    "currency": {
+      "label": "Hufeisen",
+      "maxReached": "Max Hufeisen erreicht!"
+    },
+    "gameClock": {
+      "label": "Spielzeit"
+    },
+    "gameOver": {
+      "title": "Spiel vorbei",
+      "message": "Dein Pferd braucht dringend Pflege!",
+      "reset": "Neustart"
     }
   }
 }
