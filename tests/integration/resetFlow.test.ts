@@ -111,6 +111,7 @@ describe('Reset Flow Integration', () => {
           selectedTool: 'carrot',
           activeAnimation: 'eating',
           lastInteractionTime: Date.now(),
+          lastPetTime: 0,
         },
       });
 

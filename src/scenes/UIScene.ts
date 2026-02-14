@@ -141,7 +141,8 @@ export class UIScene extends Phaser.Scene {
       fontSize: '28px',
     }).setOrigin(0.5);
 
-    this.currencyText = this.add.text(currencyX + 15, currencyY, '50', {
+    const initialCurrency = state.currency || 50;
+    this.currencyText = this.add.text(currencyX + 15, currencyY, String(initialCurrency), {
       fontSize: '24px',
       fontStyle: 'bold',
       color: '#FFD700',
@@ -149,7 +150,7 @@ export class UIScene extends Phaser.Scene {
       strokeThickness: 3,
     }).setOrigin(0, 0.5);
 
-    this.lastCurrencyValue = state.currency || 50;
+    this.lastCurrencyValue = initialCurrency;
 
     // T035: Create LanguageSelector at top right
     this.languageSelector = new LanguageSelector(this, this.scale.width - 80, 30);
