@@ -1,0 +1,1 @@
+if('serviceWorker' in navigator) {window.addEventListener('load', () => {navigator.serviceWorker.register('/fionella-rossberg/sw.js', { scope: '/fionella-rossberg/' })})}
