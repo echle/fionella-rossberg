@@ -80,9 +80,9 @@ export const CURRENCY = {
   STARTING_BALANCE: 50,    // Initial currency on new game
   MAX_BALANCE: 999999,     // Cap to prevent overflow
   REWARDS: {
-    FEED: 5,               // Horseshoes earned per feed
-    GROOM: 3,              // Horseshoes earned per groom stroke
-    PET: 2,                // Horseshoes earned per pet
+    FEED: 2,               // Horseshoes earned per feed (reduced from 5)
+    GROOM: 1,              // Horseshoes earned per groom stroke (reduced from 3)
+    PET: 1,                // Horseshoes earned per pet (reduced from 2)
     GIFT_BONUS: 10,        // Horseshoes from gift box (20% chance)
   },
 } as const;

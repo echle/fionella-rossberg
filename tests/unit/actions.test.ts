@@ -232,7 +232,8 @@ describe('Actions', () => {
       vi.advanceTimersByTime(10000);
       const fourthSuccess = pet();
       expect(fourthSuccess).toBe(true);
-      expect(useGameStore.getState().horse.happiness).toBe(INITIAL_STATUS.HAPPINESS + 20);
+      // Happiness is capped at 100, so INITIAL_STATUS.HAPPINESS (90) + 10 + 10 = 100 (not 110)
+      expect(useGameStore.getState().horse.happiness).toBe(100);
     });
 
     it('should set happy animation', () => {

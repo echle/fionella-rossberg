@@ -1,6 +1,34 @@
-# 🐴 Fionellas Pferdepflege-Spiel MVP
+# 🐴 Fionellas Pferdepflege-Spiel
 
 Ein browser-basiertes Pferdepflege-Simulationsspiel, bei dem du dein virtuelles Pferd fütterst, putzt und streichelst, um es glücklich und gesund zu halten.
+
+---
+
+## 👧👦 Für Kinder erklärt
+
+**🎮 Was ist das?**
+
+Das ist ein Spiel, in dem du dein eigenes Pferd bekommst! Du musst dich jeden Tag um dein Pferd kümmern – genau wie ein echter Pferdefreund! 🐴❤️
+
+**🎯 Was kannst du machen?**
+
+- 🥕 **Füttern**: Gib deinem Pferd leckere Karotten (Klick auf Karotte, dann auf Pferd)
+- 🪥 **Bürsten**: Mach das Fell schön sauber und glänzend (Zieh die Bürste übers Pferd)
+- 💗 **Streicheln**: Zeig deinem Pferd, dass du es lieb hast (Klick einfach aufs Pferd)
+- 💰 **Hufeisen sammeln**: Jede gute Tat gibt dir goldene Hufeisen!
+- 🛒 **Im Laden einkaufen**: Kauf neue Karotten und Bürsten mit deinen Hufeisen
+- 🎁 **Geschenke öffnen**: Alle paar Minuten gibt's eine Überraschungsbox!
+
+**⚠️ Pass gut auf!**
+
+Wenn die drei bunten Balken (Hunger, Sauberkeit, Glück) leer werden, wird dein Pferd traurig! 
+Kümmere dich jeden Tag gut um dein Pferd, dann bleibt es gesund und glücklich! 🌟
+
+**🎉 Los geht's!**
+
+Klick einfach auf "Start" und such dir einen schönen Namen für dein Pferd aus! 🐴✨
+
+---
 
 ![Horse Care Game](https://img.shields.io/badge/Status-MVP_Complete-brightgreen) ![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue) ![Phaser](https://img.shields.io/badge/Phaser-3.80-orange)
 

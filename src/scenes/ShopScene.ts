@@ -12,6 +12,7 @@ export class ShopScene extends Phaser.Scene {
   private itemCards: Phaser.GameObjects.Container[] = [];
   private buyButtons: Phaser.GameObjects.Text[] = [];
   private priceTexts: Phaser.GameObjects.Text[] = [];
+  private currencyText?: Phaser.GameObjects.Text;
   private unsubscribe?: () => void;
 
   constructor() {
@@ -23,46 +24,13 @@ export class ShopScene extends Phaser.Scene {
 
     // Container for all shop elements (for animation)
     const shopContainer = this.add.container(width / 2, height / 2);
+    shopContainer.setDepth(1000); // Below success feedback (depth 9999/10000)
 
     // T031: Semi-transparent black overlay background
     const overlay = this.add.rectangle(-width / 2, -height / 2, width, height, 0x000000, 0.7);
     overlay.setOrigin(0, 0);
     overlay.setInteractive(); // Prevent clicks from going through to game
     shopContainer.add(overlay);
-
-    // T032: Shop title
-    const titleText = this.add.text(0, -height / 2 + 60, i18nService.t('ui.shop.title'), {
-      fontSize: '36px',
-      fontStyle: 'bold',
-      color: '#FFD700',
-      stroke: '#000000',
-      strokeThickness: 4,
-    });
-    titleText.setOrigin(0.5);
-    shopContainer.add(titleText);
-
-    // T037: Close button (X) in top-right
-    const closeButton = this.add.text(width / 2 - 30, -height / 2 + 30, '✕', {
-      fontSize: '32px',
-      color: '#ffffff',
-      fontStyle: 'bold',
-    });
-    closeButton.setOrigin(0.5);
-    closeButton.setInteractive({ useHandCursor: true });
-    closeButton.on('pointerdown', () => {
-      this.closeShop(shopContainer);
-    });
-
-    // Hover effect for close button
-    closeButton.on('pointerover', () => {
-      closeButton.setScale(1.2);
-      closeButton.setColor('#ff6b6b');
-    });
-    closeButton.on('pointerout', () => {
-      closeButton.setScale(1);
-      closeButton.setColor('#ffffff');
-    });
-    shopContainer.add(closeButton);
 
     // T079: Create responsive item grid layout
     // Adjust columns based on screen width
@@ -79,7 +47,7 @@ export class ShopScene extends Phaser.Scene {
     const cardSpacing = 20;
     const gridWidth = itemsPerRow * cardWidth + (itemsPerRow - 1) * cardSpacing;
     const startX = -(gridWidth / 2);
-    const startY = -height / 2 + 140;
+    const startY = -height / 2 + 240; // Extra space: title@60, currency@110 (height ~34px), cards start below
 
     // T034: Render shop items as cards
     SHOP_ITEMS.forEach((item, index) => {
@@ -90,6 +58,53 @@ export class ShopScene extends Phaser.Scene {
 
       this.createItemCard(cardX, cardY, cardWidth, cardHeight, item, shopContainer);
     });
+
+    // Add UI elements AFTER item cards so they render on top
+    // T032: Shop title
+    const titleText = this.add.text(0, -height / 2 + 60, i18nService.t('ui.shop.title'), {
+      fontSize: '36px',
+      fontStyle: 'bold',
+      color: '#FFD700',
+      stroke: '#000000',
+      strokeThickness: 4,
+    });
+    titleText.setOrigin(0.5);
+    shopContainer.add(titleText);
+
+    // Currency display (below title)
+    const currentCurrency = useGameStore.getState().currency;
+    this.currencyText = this.add.text(0, -height / 2 + 110, `💰 ${currentCurrency}`, {
+      fontSize: '28px',
+      fontStyle: 'bold',
+      color: '#FFD700',
+      stroke: '#000000',
+      strokeThickness: 3,
+    });
+    this.currencyText.setOrigin(0.5);
+    shopContainer.add(this.currencyText);
+
+    // T037: Close button (X) in top-right
+    const closeButton = this.add.text(width / 2 - 30, -height / 2 + 30, '✕', {
+      fontSize: '32px',
+      color: '#ffffff',
+      fontStyle: 'bold',
+    });
+    closeButton.setOrigin(0.5);
+    closeButton.setInteractive({ useHandCursor: true });
+    closeButton.on('pointerdown', () => {
+      this.closeShop();
+    });
+
+    // Hover effect for close button
+    closeButton.on('pointerover', () => {
+      closeButton.setScale(1.2);
+      closeButton.setColor('#ff6b6b');
+    });
+    closeButton.on('pointerout', () => {
+      closeButton.setScale(1);
+      closeButton.setColor('#ffffff');
+    });
+    shopContainer.add(closeButton);
 
     // Feature 006 T071: Scale-in animation on open (300ms, ease-out)
     shopContainer.setScale(0);
@@ -215,123 +230,54 @@ export class ShopScene extends Phaser.Scene {
 
     if (success) {
       // T080: Haptic feedback on mobile (success: short burst)
-      if ('vibrate' in navigator) {
+      if ('vibrate' in navigator && typeof navigator.vibrate === 'function') {
         navigator.vibrate([30, 50, 30]); // Short-long-short pattern
       }
 
-      // T074: Show checkmark animation
       const centerX = this.scale.width / 2;
       const centerY = this.scale.height / 2;
 
-      // T075: Find purchased item for floating notification
-      const purchasedItem = SHOP_ITEMS.find((item) => item.id === itemId);
-      if (purchasedItem) {
-        // Floating "+[amount] [icon]" notification
-        const rewardText = `+${purchasedItem.rewardAmount} ${purchasedItem.rewardType === 'carrot' ? '🥕' : purchasedItem.rewardType === 'brush' ? '🪥' : '💰'}`;
-        const floatingNotif = this.add.text(centerX + 100, centerY, rewardText, {
-          fontSize: '28px',
-          fontStyle: 'bold',
-          color: '#FFD700',
-          stroke: '#000000',
-          strokeThickness: 3,
-        });
-        floatingNotif.setOrigin(0.5);
+      // Subtle feedback with semi-transparent background
+      const feedbackBg = this.add.rectangle(centerX, centerY - 100, 400, 100, 0x000000, 0.75);
+      feedbackBg.setDepth(50000);
+      feedbackBg.setAlpha(0);
 
-        // Float upward with fade-out
-        this.tweens.add({
-          targets: floatingNotif,
-          y: centerY - 120,
-          alpha: 0,
-          duration: 1500,
-          ease: 'Cubic.easeOut',
-          onComplete: () => {
-            floatingNotif.destroy();
-          },
-        });
-      }
-
-      // T076: Sparkle particle burst
-      for (let i = 0; i < 8; i++) {
-        const angle = (Math.PI * 2 * i) / 8; // Evenly distributed angles
-        const distance = 80 + Math.random() * 40; // Random distance 80-120px
-        const sparkle = this.add.text(centerX, centerY, '✨', {
-          fontSize: '20px',
-        });
-        sparkle.setOrigin(0.5);
-        sparkle.setAlpha(0.8);
-
-        // Calculate target position
-        const targetX = centerX + Math.cos(angle) * distance;
-        const targetY = centerY + Math.sin(angle) * distance;
-
-        // Animate sparkle outward with fade
-        this.tweens.add({
-          targets: sparkle,
-          x: targetX,
-          y: targetY,
-          alpha: 0,
-          scale: 0.3,
-          duration: 600,
-          ease: 'Cubic.easeOut',
-          onComplete: () => {
-            sparkle.destroy();
-          },
-        });
-      }
-
-      // Checkmark (✓) with scale animation
-      const checkmark = this.add.text(centerX, centerY - 150, '✓', {
-        fontSize: '64px',
+      const feedbackText = this.add.text(centerX, centerY - 100, '✓ Gekauft!', {
+        fontSize: '42px',
+        fontFamily: 'Arial',
+        fontStyle: 'bold',
         color: '#4CAF50',
         stroke: '#ffffff',
         strokeThickness: 4,
       });
-      checkmark.setOrigin(0.5);
-      checkmark.setScale(0);
+      feedbackText.setOrigin(0.5);
+      feedbackText.setDepth(50001);
+      feedbackText.setAlpha(0);
 
-      // Checkmark scale-in animation (elastic ease)
+      // Smooth fade-in
       this.tweens.add({
-        targets: checkmark,
-        scale: 1.2,
-        duration: 400,
-        ease: 'Elastic.easeOut',
-        onComplete: () => {
-          // Hold briefly, then fade out
-          this.tweens.add({
-            targets: checkmark,
-            alpha: 0,
-            duration: 300,
-            delay: 800,
-            ease: 'Power2',
-            onComplete: () => {
-              checkmark.destroy();
-            },
-          });
-        },
-      });
-
-      const successText = this.add.text(centerX, centerY - 100, i18nService.t('ui.shop.purchaseSuccess'), {
-        fontSize: '24px',
-        fontStyle: 'bold',
-        color: '#4CAF50',
-        stroke: '#000000',
-        strokeThickness: 3,
-      });
-      successText.setOrigin(0.5);
-
-      // Fade out success message
-      this.tweens.add({
-        targets: successText,
-        alpha: 0,
-        duration: 2000,
+        targets: [feedbackBg, feedbackText],
+        alpha: 1,
+        duration: 200,
         ease: 'Power2',
-        onComplete: () => {
-          successText.destroy();
-        },
+      });
+
+      // Fade out after 1.2 seconds
+      this.time.delayedCall(1200, () => {
+        this.tweens.add({
+          targets: [feedbackBg, feedbackText],
+          alpha: 0,
+          duration: 300,
+          ease: 'Power2',
+          onComplete: () => {
+            feedbackBg.destroy();
+            feedbackText.destroy();
+          },
+        });
       });
     } else {
       // T080: Haptic feedback on mobile (error: single strong pulse)
-      if ('vibrate' in navigator) {
+      if ('vibrate' in navigator && typeof navigator.vibrate === 'function') {
         navigator.vibrate(200); // Single 200ms vibration for error
       }
 
@@ -401,6 +347,12 @@ export class ShopScene extends Phaser.Scene {
    * T036: Update button states based on affordability
    */
   private updateAffordability(): void {
+    // Update currency display
+    const currentCurrency = useGameStore.getState().currency;
+    if (this.currencyText) {
+      this.currencyText.setText(`💰 ${currentCurrency}`);
+    }
+
     // T077: Update button and price text colors based on affordability
     this.buyButtons.forEach((button, index) => {
       const price = button.getData('price') as number;
