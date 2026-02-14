@@ -18,6 +18,11 @@ export const STATUS_INCREMENTS = {
   PET: 10, // Happiness +10 per pet
 } as const;
 
+// Interaction cooldowns
+export const COOLDOWNS = {
+  PET: 30000, // 30 seconds cooldown between petting
+} as const;
+
 // Initial inventory values
 export const INITIAL_INVENTORY = {
   CARROTS: 10,

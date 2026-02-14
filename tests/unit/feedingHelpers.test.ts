@@ -15,7 +15,7 @@ function createMockState(overrides: Partial<GameState> = {}): GameState {
     timestamp: Date.now(),
     horse: { hunger: 50, cleanliness: 50, happiness: 50 },
     inventory: { carrots: 5, brushUses: 5 },
-    ui: { selectedTool: null, activeAnimation: null, lastInteractionTime: 0 },
+    ui: { selectedTool: null, activeAnimation: null, lastInteractionTime: 0, lastPetTime: 0 },
     feeding: {
       isEating: false,
       eatStartTime: null,

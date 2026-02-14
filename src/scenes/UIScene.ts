@@ -3,7 +3,7 @@ import { StatusBar } from '../entities/StatusBar';
 import { InventoryItem } from '../entities/InventoryItem';
 import { useGameStore } from '../state/gameStore';
 import { selectTool, resetGame, getElapsedSeconds } from '../state/actions';
-import { GAME_CONFIG, FEEDING_CONFIG } from '../config/gameConstants';
+import { GAME_CONFIG, FEEDING_CONFIG, COOLDOWNS } from '../config/gameConstants';
 import { canFeed } from '../utils/feedingHelpers';
 import { i18nService } from '../services/i18nService';
 import { LanguageSelector } from '../components/LanguageSelector';
@@ -27,6 +27,9 @@ export class UIScene extends Phaser.Scene {
   private fullnessBadgeText?: Phaser.GameObjects.Text;
   private cooldownTimerText?: Phaser.GameObjects.Text;
   private timerEvent?: Phaser.Time.TimerEvent;
+
+  // Feature 006: Pet cooldown indicator
+  private petCooldownText?: Phaser.GameObjects.Text;
 
   // Reset button elements
   private resetButton?: Phaser.GameObjects.Text;
@@ -214,6 +217,22 @@ export class UIScene extends Phaser.Scene {
       callbackScope: this,
       loop: true,
     });
+
+    // Feature 006: Create pet cooldown indicator (center-bottom, above horse)
+    this.petCooldownText = this.add.text(
+      centerX,
+      this.scale.height - 180, // Above horse position
+      '💗 Bereit in: 30s',
+      {
+        fontSize: '18px',
+        color: '#ff6b9d',
+        fontStyle: 'bold',
+        stroke: '#ffffff',
+        strokeThickness: 4,
+        shadow: { offsetX: 2, offsetY: 2, color: '#000000', blur: 4, fill: true },
+        padding: { x: 8, y: 4 },
+      }
+    ).setOrigin(0.5).setVisible(false).setDepth(100);
 
     // Create reset button (top-right corner, initially hidden)
     this.resetButton = this.add.text(
@@ -437,6 +456,18 @@ export class UIScene extends Phaser.Scene {
       this.cooldownTimerText?.setVisible(false);
     }
 
+    // Feature 006: Update pet cooldown indicator
+    const timeSinceLastPet = now - state.ui.lastPetTime;
+    const petCooldownRemaining = COOLDOWNS.PET - timeSinceLastPet;
+
+    if (petCooldownRemaining > 0 && timeSinceLastPet > 0) {
+      const remainingSeconds = Math.ceil(petCooldownRemaining / 1000);
+      this.petCooldownText?.setText(`💗 ${i18nService.t('ui.game.readyIn', { seconds: remainingSeconds.toString() })}`);
+      this.petCooldownText?.setVisible(true);
+    } else {
+      this.petCooldownText?.setVisible(false);
+    }
+
     // Feature 006 T023: Update currency display when it changes
     const currentCurrency = state.currency;
     if (currentCurrency !== this.lastCurrencyValue) {
@@ -589,6 +620,20 @@ export class UIScene extends Phaser.Scene {
         const remainingSeconds = Math.ceil(remainingMs / 1000);
         this.cooldownTimerText.setText(
           i18nService.t('ui.messages.cooldownTimer', { seconds: remainingSeconds.toString() })
+        );
+      }
+    }
+
+    // Update pet cooldown text if visible
+    if (this.petCooldownText && this.petCooldownText.visible) {
+      const state = useGameStore.getState();
+      const now = Date.now();
+      const timeSinceLastPet = now - state.ui.lastPetTime;
+      const petCooldownRemaining = COOLDOWNS.PET - timeSinceLastPet;
+      if (petCooldownRemaining > 0) {
+        const remainingSeconds = Math.ceil(petCooldownRemaining / 1000);
+        this.petCooldownText.setText(
+          `💗 ${i18nService.t('ui.game.readyIn', { seconds: remainingSeconds.toString() })}`
         );
       }
     }

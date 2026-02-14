@@ -40,6 +40,7 @@ describe('Economy Actions', () => {
         selectedTool: null,
         activeAnimation: null,
         lastInteractionTime: 0,
+        lastPetTime: 0,
       },
       feeding: DEFAULT_FEEDING_STATE,
       locale: {

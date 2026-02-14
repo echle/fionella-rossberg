@@ -9,6 +9,7 @@ import {
   GAME_CONFIG,
   CURRENCY,
   SHOP_ITEMS,
+  COOLDOWNS,
 } from '../config/gameConstants';
 import { msToSeconds } from '../utils/timeUtils';
 import { ToolType } from './types';
@@ -156,9 +157,18 @@ export function groom(): boolean {
 
 /**
  * Pet the horse (increase happiness)
+ * Feature 006 Balance: 30s cooldown to prevent currency spam
  */
-export function pet(): void {
+export function pet(): boolean {
   const state = getGameState();
+  const now = Date.now();
+  const timeSinceLastPet = now - state.ui.lastPetTime;
+
+  // Check cooldown
+  if (timeSinceLastPet < COOLDOWNS.PET) {
+    console.log('[pet] On cooldown, remaining:', Math.ceil((COOLDOWNS.PET - timeSinceLastPet) / 1000), 's');
+    return false;
+  }
 
   updateGameState(() => ({
     horse: {
@@ -168,6 +178,7 @@ export function pet(): void {
     ui: {
       ...state.ui,
       activeAnimation: 'happy',
+      lastPetTime: now,
     },
   }));
 
@@ -176,6 +187,7 @@ export function pet(): void {
 
   // Feature 006: Award currency for petting
   earnCurrency(CURRENCY.REWARDS.PET);
+  return true;
 }
 
 /**
@@ -229,6 +241,7 @@ export function resetGame(): void {
       selectedTool: null,
       activeAnimation: null,
       lastInteractionTime: 0,
+      lastPetTime: 0,
     },
     feeding: {
       isEating: false,

@@ -78,10 +78,17 @@ export class MainGameScene extends Phaser.Scene {
         }
       } else if (state.ui.selectedTool === null) {
         // Pet the horse (no tool selected)
-        pet();
-        console.log('Petted horse! Happiness increased by 10');
-        this.horse?.playHappyAnimation();
-        this.spawnHearts(centerX, centerY - 50);
+        const success = pet();
+        if (success) {
+          console.log('Petted horse! Happiness increased by 10');
+          this.horse?.playHappyAnimation();
+          // Spawn heart particles in multiple bursts for extra love
+          this.spawnHearts(centerX, centerY - 50);
+          this.time.delayedCall(150, () => this.spawnHearts(centerX - 30, centerY - 40));
+          this.time.delayedCall(300, () => this.spawnHearts(centerX + 30, centerY - 40));
+        } else {
+          console.log('Pet on cooldown - wait a moment');
+        }
       }
     });
 
@@ -147,8 +154,8 @@ export class MainGameScene extends Phaser.Scene {
     });
 
     // Create particle emitter for sparkles (reusable)
-    const sparkleTexture = this.textures.exists('particle-sparkle') ? 'particle-sparkle' : '✨';
-    this.particles = this.add.particles(0, 0, sparkleTexture, {
+    // Note: particle-sparkle texture is created programmatically in BootScene if asset is missing
+    this.particles = this.add.particles(0, 0, 'particle-sparkle', {
       speed: { min: 20, max: 100 },
       scale: { start: 1, end: 0 },
       alpha: { start: 1, end: 0 },
@@ -156,19 +163,19 @@ export class MainGameScene extends Phaser.Scene {
       gravityY: -50,
       emitting: false,
     });
-    console.log(`[Particles] Using ${sparkleTexture === 'particle-sparkle' ? 'sprite' : 'emoji'} for sparkles`);
 
     // Create particle emitter for hearts (reusable)
-    const heartTexture = this.textures.exists('particle-heart') ? 'particle-heart' : '❤️';
-    this.heartParticles = this.add.particles(0, 0, heartTexture, {
-      speed: { min: 10, max: 30 },
-      scale: { start: 1, end: 0.5 },
+    // Note: particle-heart texture is created programmatically in BootScene if asset is missing
+    this.heartParticles = this.add.particles(0, 0, 'particle-heart', {
+      speed: { min: 30, max: 80 },
+      scale: { start: 1.2, end: 0.3 },
       alpha: { start: 1, end: 0 },
-      lifespan: 1000,
-      gravityY: -80,
+      lifespan: 1200,
+      gravityY: -100,
+      angle: { min: -30, max: 30 },
+      rotate: { min: -180, max: 180 },
       emitting: false,
     });
-    console.log(`[Particles] Using ${heartTexture === 'particle-heart' ? 'sprite' : 'emoji'} for hearts`);
 
     // Setup auto-save interval (every 10 seconds)
     this.autoSaveInterval = setInterval(() => {
@@ -193,8 +200,9 @@ export class MainGameScene extends Phaser.Scene {
   }
 
   private spawnHearts(x: number, y: number): void {
-    // Emit heart particles
-    this.heartParticles?.emitParticleAt(x, y, 2);
+    // Emit more heart particles for pet action (5-8 hearts)
+    const heartCount = Phaser.Math.Between(5, 8);
+    this.heartParticles?.emitParticleAt(x, y, heartCount);
   }
 
   update(_time: number, _delta: number): void {

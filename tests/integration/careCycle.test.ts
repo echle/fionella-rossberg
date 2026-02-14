@@ -34,6 +34,7 @@ describe('Care Cycle Integration', () => {
         selectedTool: null,
         activeAnimation: null,
         lastInteractionTime: 0,
+        lastPetTime: 0,
       },
     });
   });
@@ -84,6 +85,7 @@ describe('Care Cycle Integration', () => {
           selectedTool: null,
           activeAnimation: null,
           lastInteractionTime: 0,
+          lastPetTime: 0,
         },
       });
 
@@ -153,6 +155,7 @@ describe('Care Cycle Integration', () => {
           selectedTool: null,
           activeAnimation: null,
           lastInteractionTime: 0,
+          lastPetTime: 0,
         },
       });
 
@@ -207,6 +210,7 @@ describe('Care Cycle Integration', () => {
           selectedTool: null,
           activeAnimation: null,
           lastInteractionTime: 0,
+          lastPetTime: 0,
         },
       });
 
@@ -299,6 +303,7 @@ describe('Care Cycle Integration', () => {
           selectedTool: null,
           activeAnimation: null,
           lastInteractionTime: 0,
+          lastPetTime: 0,
         },
       });
 
@@ -349,6 +354,7 @@ describe('Care Cycle Integration', () => {
           selectedTool: null,
           activeAnimation: null,
           lastInteractionTime: 0,
+          lastPetTime: 0,
         },
       });
 
@@ -516,6 +522,7 @@ describe('Care Cycle Integration', () => {
           selectedTool: null,
           activeAnimation: null,
           lastInteractionTime: 0,
+          lastPetTime: 0,
         },
       });
 

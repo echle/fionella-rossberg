@@ -37,6 +37,7 @@ describe('Actions', () => {
         selectedTool: null,
         activeAnimation: null,
         lastInteractionTime: 0,
+        lastPetTime: 0,
       },
       locale: {
         language: 'de',
@@ -211,14 +212,27 @@ describe('Actions', () => {
       expect(state.horse.happiness).toBe(100);
     });
 
-    it('should never fail (always available)', () => {
-      // Pet multiple times to ensure no resource depletion
-      for (let i = 0; i < 10; i++) {
-        pet();
-      }
+    it('should be blocked by 30s cooldown (Feature 006 balance)', () => {
+      // First pet succeeds
+      const firstSuccess = pet();
+      expect(firstSuccess).toBe(true);
+      expect(useGameStore.getState().horse.happiness).toBe(INITIAL_STATUS.HAPPINESS + 10);
 
-      const state = useGameStore.getState();
-      expect(state.horse.happiness).toBe(100); // Clamped at max
+      // Immediate second pet blocked by cooldown
+      const secondSuccess = pet();
+      expect(secondSuccess).toBe(false);
+      expect(useGameStore.getState().horse.happiness).toBe(INITIAL_STATUS.HAPPINESS + 10); // Unchanged
+
+      // Wait 20 seconds - still blocked
+      vi.advanceTimersByTime(20000);
+      const thirdSuccess = pet();
+      expect(thirdSuccess).toBe(false);
+
+      // Wait 10 more seconds (total 30s) - now allowed
+      vi.advanceTimersByTime(10000);
+      const fourthSuccess = pet();
+      expect(fourthSuccess).toBe(true);
+      expect(useGameStore.getState().horse.happiness).toBe(INITIAL_STATUS.HAPPINESS + 20);
     });
 
     it('should set happy animation', () => {

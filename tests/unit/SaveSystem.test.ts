@@ -34,6 +34,7 @@ describe('SaveSystem', () => {
         selectedTool: null,
         activeAnimation: null,
         lastInteractionTime: 0,
+        lastPetTime: 0,
       },
       locale: {
         language: 'de',

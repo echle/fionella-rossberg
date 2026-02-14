@@ -30,6 +30,7 @@ export interface UIState {
   selectedTool: ToolType;
   activeAnimation: string | null;
   lastInteractionTime: number;
+  lastPetTime: number; // Timestamp of last pet action for cooldown
 }
 
 export interface FeedingState {
